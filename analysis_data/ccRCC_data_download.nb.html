@@ -11,7 +11,7 @@
 
 
 
-<title>Data Download (Clinical Data)</title>
+<title>TCGA-KIRC Data Download</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,169 +1746,279 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Data Download (Clinical Data)</h1>
+<h1 class="title toc-ignore">TCGA-KIRC Data Download</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
+<div id="section" class="section level1">
+<h1>============================================</h1>
+</div>
+<div id="package-installation-and-loading" class="section level1">
+<h1>Package Installation and Loading</h1>
+</div>
+<div id="section-1" class="section level1">
+<h1>============================================</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVhV1lnS0NGeVpYRjFhWEpsS0Z3aWEyNXBkSEpjSWl3Z2NYVnBaWFJzZVNBOUlGUlNWVVVwS1Z4dWFXNXpkR0ZzYkM1d1lXTnJZV2RsY3loY0ltdHVhWFJ5WENJcFhHNXBaaUFvSVhKbGNYVnBjbVVvWENKQ2FXOWpUV0Z1WVdkbGNsd2lMQ0J4ZFdsbGRHeDVJRDBnVkZKVlJTa3BYRzVwYm5OMFlXeHNMbkJoWTJ0aFoyVnpLRndpUW1sdlkwMWhibUZuWlhKY0lpbGNia0pwYjJOTllXNWhaMlZ5T2pwcGJuTjBZV3hzS0habGNuTnBiMjRnUFNCY0lqTXVNakZjSWlsY2JtQmdZQ0o5IC0tPlxuXG5gYGByXG5pZiAoIXJlcXVpcmUoXCJrbml0clwiLCBxdWlldGx5ID0gVFJVRSkpXG5pbnN0YWxsLnBhY2thZ2VzKFwia25pdHJcIilcbmlmICghcmVxdWlyZShcIkJpb2NNYW5hZ2VyXCIsIHF1aWV0bHkgPSBUUlVFKSlcbmluc3RhbGwucGFja2FnZXMoXCJCaW9jTWFuYWdlclwiKVxuQmlvY01hbmFnZXI6Omluc3RhbGwodmVyc2lvbiA9IFwiMy4yMVwiKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaWYgKCFyZXF1aXJlKFwia25pdHJcIiwgcXVpZXRseSA9IFRSVUUpKVxuaW5zdGFsbC5wYWNrYWdlcyhcImtuaXRyXCIpXG5pZiAoIXJlcXVpcmUoXCJCaW9jTWFuYWdlclwiLCBxdWlldGx5ID0gVFJVRSkpXG5pbnN0YWxsLnBhY2thZ2VzKFwiQmlvY01hbmFnZXJcIilcbkJpb2NNYW5hZ2VyOjppbnN0YWxsKHZlcnNpb24gPSBcIjMuMjFcIilcbmBgYCJ9 -->
-<pre class="r"><code>if (!require(&quot;knitr&quot;, quietly = TRUE))
-install.packages(&quot;knitr&quot;)
-if (!require(&quot;BiocManager&quot;, quietly = TRUE))
-install.packages(&quot;BiocManager&quot;)
-BiocManager::install(version = &quot;3.21&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVXBkYXRlIGFsbC9zb21lL25vbmU/IFthL3Mvbl06IFxuIn0= -->
-<pre><code>Update all/some/none? [a/s/n]: </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVibHh1YVdZZ0tDRnlaWEYxYVhKbEtGd2lWRU5IUVdKcGIyeHBibXR6WENJc0lIRjFhV1YwYkhrZ1BTQlVVbFZGS1NsY2JrSnBiMk5OWVc1aFoyVnlPanBwYm5OMFlXeHNLRndpVkVOSFFXSnBiMnhwYm10elhDSXBYRzVwWmlBb0lYSmxjWFZwY21Vb1hDSnRZV1owYjI5c2Mxd2lMQ0J4ZFdsbGRHeDVJRDBnVkZKVlJTa3BYRzVDYVc5alRXRnVZV2RsY2pvNmFXNXpkR0ZzYkNoY0ltMWhablJ2YjJ4elhDSXBYRzVzYVdKeVlYSjVLRUpwYjJOTllXNWhaMlZ5S1Z4dWJHbGljbUZ5ZVNoVVEwZEJZbWx2YkdsdWEzTXBYRzVzYVdKeVlYSjVLRzFoWm5SdmIyeHpLVnh1WUdCZ0luMD0gLS0+XG5cbmBgYHJcbm5cbmlmICghcmVxdWlyZShcIlRDR0FiaW9saW5rc1wiLCBxdWlldGx5ID0gVFJVRSkpXG5CaW9jTWFuYWdlcjo6aW5zdGFsbChcIlRDR0FiaW9saW5rc1wiKVxuaWYgKCFyZXF1aXJlKFwibWFmdG9vbHNcIiwgcXVpZXRseSA9IFRSVUUpKVxuQmlvY01hbmFnZXI6Omluc3RhbGwoXCJtYWZ0b29sc1wiKVxubGlicmFyeShCaW9jTWFuYWdlcilcbmxpYnJhcnkoVENHQWJpb2xpbmtzKVxubGlicmFyeShtYWZ0b29scylcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxublxuaWYgKCFyZXF1aXJlKFwiVENHQWJpb2xpbmtzXCIsIHF1aWV0bHkgPSBUUlVFKSlcbkJpb2NNYW5hZ2VyOjppbnN0YWxsKFwiVENHQWJpb2xpbmtzXCIpXG5pZiAoIXJlcXVpcmUoXCJtYWZ0b29sc1wiLCBxdWlldGx5ID0gVFJVRSkpXG5CaW9jTWFuYWdlcjo6aW5zdGFsbChcIm1hZnRvb2xzXCIpXG5saWJyYXJ5KEJpb2NNYW5hZ2VyKVxubGlicmFyeShUQ0dBYmlvbGlua3MpXG5saWJyYXJ5KG1hZnRvb2xzKVxuYGBgIn0= -->
-<pre class="r"><code>n
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVhV1lnS0NGeVpYRjFhWEpsS0Z3aVFtbHZZMDFoYm1GblpYSmNJaXdnY1hWcFpYUnNlU0E5SUZSU1ZVVXBLVnh1SUNCcGJuTjBZV3hzTG5CaFkydGhaMlZ6S0Z3aVFtbHZZMDFoYm1GblpYSmNJaWxjYmx4dUl5QlRhMmx3SUhabGNuTnBiMjRnZG1Gc2FXUmhkR2x2YmlCcFppQnVieUJwYm5SbGNtNWxkRnh1YjNCMGFXOXVjeWhDYVc5alRXRnVZV2RsY2k1amFHVmphMTl5WlhCdmMybDBiM0pwWlhNZ1BTQkdRVXhUUlNsY2JseHVJeUJKYm5OMFlXeHNJSGRwZEdodmRYUWdkbVZ5YzJsdmJpQnpjR1ZqYVdacFkyRjBhVzl1WEc1cFppQW9JWEpsY1hWcGNtVW9YQ0pVUTBkQlltbHZiR2x1YTNOY0lpd2djWFZwWlhSc2VTQTlJRlJTVlVVcEtWeHVJQ0JDYVc5alRXRnVZV2RsY2pvNmFXNXpkR0ZzYkNoY0lsUkRSMEZpYVc5c2FXNXJjMXdpTENCaGMyc2dQU0JHUVV4VFJTd2dkWEJrWVhSbElEMGdSa0ZNVTBVcFhHNXBaaUFvSVhKbGNYVnBjbVVvWENKdFlXWjBiMjlzYzF3aUxDQnhkV2xsZEd4NUlEMGdWRkpWUlNrcFhHNGdJRUpwYjJOTllXNWhaMlZ5T2pwcGJuTjBZV3hzS0Z3aWJXRm1kRzl2YkhOY0lpd2dZWE5ySUQwZ1JrRk1VMFVzSUhWd1pHRjBaU0E5SUVaQlRGTkZLVnh1YVdZZ0tDRnlaWEYxYVhKbEtGd2lVM1Z0YldGeWFYcGxaRVY0Y0dWeWFXMWxiblJjSWl3Z2NYVnBaWFJzZVNBOUlGUlNWVVVwS1Z4dUlDQkNhVzlqVFdGdVlXZGxjam82YVc1emRHRnNiQ2hjSWxOMWJXMWhjbWw2WldSRmVIQmxjbWx0Wlc1MFhDSXNJR0Z6YXlBOUlFWkJURk5GTENCMWNHUmhkR1VnUFNCR1FVeFRSU2xjYmx4dWJHbGljbUZ5ZVNoQ2FXOWpUV0Z1WVdkbGNpbGNibXhwWW5KaGNua29WRU5IUVdKcGIyeHBibXR6S1Z4dWJHbGljbUZ5ZVNodFlXWjBiMjlzY3lsY2JteHBZbkpoY25rb1UzVnRiV0Z5YVhwbFpFVjRjR1Z5YVcxbGJuUXBYRzVnWUdBaWZRPT0gLS0+XG5cbmBgYHJcbmlmICghcmVxdWlyZShcIkJpb2NNYW5hZ2VyXCIsIHF1aWV0bHkgPSBUUlVFKSlcbiAgaW5zdGFsbC5wYWNrYWdlcyhcIkJpb2NNYW5hZ2VyXCIpXG5cbiMgU2tpcCB2ZXJzaW9uIHZhbGlkYXRpb24gaWYgbm8gaW50ZXJuZXRcbm9wdGlvbnMoQmlvY01hbmFnZXIuY2hlY2tfcmVwb3NpdG9yaWVzID0gRkFMU0UpXG5cbiMgSW5zdGFsbCB3aXRob3V0IHZlcnNpb24gc3BlY2lmaWNhdGlvblxuaWYgKCFyZXF1aXJlKFwiVENHQWJpb2xpbmtzXCIsIHF1aWV0bHkgPSBUUlVFKSlcbiAgQmlvY01hbmFnZXI6Omluc3RhbGwoXCJUQ0dBYmlvbGlua3NcIiwgYXNrID0gRkFMU0UsIHVwZGF0ZSA9IEZBTFNFKVxuaWYgKCFyZXF1aXJlKFwibWFmdG9vbHNcIiwgcXVpZXRseSA9IFRSVUUpKVxuICBCaW9jTWFuYWdlcjo6aW5zdGFsbChcIm1hZnRvb2xzXCIsIGFzayA9IEZBTFNFLCB1cGRhdGUgPSBGQUxTRSlcbmlmICghcmVxdWlyZShcIlN1bW1hcml6ZWRFeHBlcmltZW50XCIsIHF1aWV0bHkgPSBUUlVFKSlcbiAgQmlvY01hbmFnZXI6Omluc3RhbGwoXCJTdW1tYXJpemVkRXhwZXJpbWVudFwiLCBhc2sgPSBGQUxTRSwgdXBkYXRlID0gRkFMU0UpXG5cbmxpYnJhcnkoQmlvY01hbmFnZXIpXG5saWJyYXJ5KFRDR0FiaW9saW5rcylcbmxpYnJhcnkobWFmdG9vbHMpXG5saWJyYXJ5KFN1bW1hcml6ZWRFeHBlcmltZW50KVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaWYgKCFyZXF1aXJlKFwiQmlvY01hbmFnZXJcIiwgcXVpZXRseSA9IFRSVUUpKVxuICBpbnN0YWxsLnBhY2thZ2VzKFwiQmlvY01hbmFnZXJcIilcblxuIyBTa2lwIHZlcnNpb24gdmFsaWRhdGlvbiBpZiBubyBpbnRlcm5ldFxub3B0aW9ucyhCaW9jTWFuYWdlci5jaGVja19yZXBvc2l0b3JpZXMgPSBGQUxTRSlcblxuIyBJbnN0YWxsIHdpdGhvdXQgdmVyc2lvbiBzcGVjaWZpY2F0aW9uXG5pZiAoIXJlcXVpcmUoXCJUQ0dBYmlvbGlua3NcIiwgcXVpZXRseSA9IFRSVUUpKVxuICBCaW9jTWFuYWdlcjo6aW5zdGFsbChcIlRDR0FiaW9saW5rc1wiLCBhc2sgPSBGQUxTRSwgdXBkYXRlID0gRkFMU0UpXG5pZiAoIXJlcXVpcmUoXCJtYWZ0b29sc1wiLCBxdWlldGx5ID0gVFJVRSkpXG4gIEJpb2NNYW5hZ2VyOjppbnN0YWxsKFwibWFmdG9vbHNcIiwgYXNrID0gRkFMU0UsIHVwZGF0ZSA9IEZBTFNFKVxuaWYgKCFyZXF1aXJlKFwiU3VtbWFyaXplZEV4cGVyaW1lbnRcIiwgcXVpZXRseSA9IFRSVUUpKVxuICBCaW9jTWFuYWdlcjo6aW5zdGFsbChcIlN1bW1hcml6ZWRFeHBlcmltZW50XCIsIGFzayA9IEZBTFNFLCB1cGRhdGUgPSBGQUxTRSlcblxubGlicmFyeShCaW9jTWFuYWdlcilcbmxpYnJhcnkoVENHQWJpb2xpbmtzKVxubGlicmFyeShtYWZ0b29scylcbmxpYnJhcnkoU3VtbWFyaXplZEV4cGVyaW1lbnQpXG5gYGAifQ== -->
+<pre class="r"><code>if (!require(&quot;BiocManager&quot;, quietly = TRUE))
+  install.packages(&quot;BiocManager&quot;)
+
+# Skip version validation if no internet
+options(BiocManager.check_repositories = FALSE)
+
+# Install without version specification
 if (!require(&quot;TCGAbiolinks&quot;, quietly = TRUE))
-BiocManager::install(&quot;TCGAbiolinks&quot;)
+  BiocManager::install(&quot;TCGAbiolinks&quot;, ask = FALSE, update = FALSE)
 if (!require(&quot;maftools&quot;, quietly = TRUE))
-BiocManager::install(&quot;maftools&quot;)
+  BiocManager::install(&quot;maftools&quot;, ask = FALSE, update = FALSE)
+if (!require(&quot;SummarizedExperiment&quot;, quietly = TRUE))
+  BiocManager::install(&quot;SummarizedExperiment&quot;, ask = FALSE, update = FALSE)
+
 library(BiocManager)
 library(TCGAbiolinks)
-library(maftools)</code></pre>
+library(maftools)
+library(SummarizedExperiment)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="section-2" class="section level1">
+<h1>============================================</h1>
+</div>
+<div id="set-working-directory-and-create-output-folder" class="section level1">
+<h1>Set Working Directory and Create Output Folder</h1>
+</div>
+<div id="section-3" class="section level1">
+<h1>============================================</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVhMjVwZEhJNk9tOXdkSE5mYTI1cGRDUnpaWFFvY205dmRDNWthWElnUFNCdWIzSnRZV3hwZW1WUVlYUm9LRndpTDJodmJXVXhMM05sZFc1bloyVnZMelE1TUY5amJIVnpkR1Z5TDJGdVlXeDVjMmx6WDJSaGRHRXZYQ0lwS1Z4dVlHQmdJbjA9IC0tPlxuXG5gYGByXG5rbml0cjo6b3B0c19rbml0JHNldChyb290LmRpciA9IG5vcm1hbGl6ZVBhdGgoXCIvaG9tZTEvc2V1bmdnZW8vNDkwX2NsdXN0ZXIvYW5hbHlzaXNfZGF0YS9cIikpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSBub3JtYWxpemVQYXRoKFwiL2hvbWUxL3NldW5nZ2VvLzQ5MF9jbHVzdGVyL2FuYWx5c2lzX2RhdGEvXCIpKVxuYGBgIn0= -->
-<pre class="r"><code>knitr::opts_knit$set(root.dir = normalizePath(&quot;/home1/seunggeo/490_cluster/analysis_data/&quot;))</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJUWlhRZ2VXOTFjaUJ5YjI5MElHUnBjbVZqZEc5eWVWeHVhMjVwZEhJNk9tOXdkSE5mYTI1cGRDUnpaWFFvY205dmRDNWthWElnUFNCdWIzSnRZV3hwZW1WUVlYUm9LRndpTDJodmJXVXhMM05sZFc1bloyVnZMelE1TUY5amJIVnpkR1Z5TDJGdVlXeDVjMmx6WDJSaGRHRXZYQ0lwS1Z4dVhHNGpJRU55WldGMFpTQnZkWFJ3ZFhSeklHWnZiR1JsY2lCbWIzSWdjMkYyYVc1bklHWnBaM1Z5WlhNZ1lXNWtJSEpsYzNWc2RITWdLSEpsY1hWcGNtVmtJR0o1SUhCeWIycGxZM1FnWjNWcFpHVnNhVzVsY3lsY2JtUnBjaTVqY21WaGRHVW9YQ0l2YUc5dFpURXZjMlYxYm1kblpXOHZORGt3WDJOc2RYTjBaWEl2Y1dKcGJ6UTVNRjltWVRJMVgyWnBibUZzWDB0SlVrTXZiM1YwY0hWMGMxd2lMQ0JjYmlBZ0lDQWdJQ0FnSUNBZ2MyaHZkMWRoY201cGJtZHpJRDBnUmtGTVUwVXNJSEpsWTNWeWMybDJaU0E5SUZSU1ZVVXBYRzVnWUdBaWZRPT0gLS0+XG5cbmBgYHJcbiMgU2V0IHlvdXIgcm9vdCBkaXJlY3RvcnlcbmtuaXRyOjpvcHRzX2tuaXQkc2V0KHJvb3QuZGlyID0gbm9ybWFsaXplUGF0aChcIi9ob21lMS9zZXVuZ2dlby80OTBfY2x1c3Rlci9hbmFseXNpc19kYXRhL1wiKSlcblxuIyBDcmVhdGUgb3V0cHV0cyBmb2xkZXIgZm9yIHNhdmluZyBmaWd1cmVzIGFuZCByZXN1bHRzIChyZXF1aXJlZCBieSBwcm9qZWN0IGd1aWRlbGluZXMpXG5kaXIuY3JlYXRlKFwiL2hvbWUxL3NldW5nZ2VvLzQ5MF9jbHVzdGVyL3FiaW80OTBfZmEyNV9maW5hbF9LSVJDL291dHB1dHNcIiwgXG4gICAgICAgICAgIHNob3dXYXJuaW5ncyA9IEZBTFNFLCByZWN1cnNpdmUgPSBUUlVFKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBTZXQgeW91ciByb290IGRpcmVjdG9yeVxua25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSBub3JtYWxpemVQYXRoKFwiL2hvbWUxL3NldW5nZ2VvLzQ5MF9jbHVzdGVyL2FuYWx5c2lzX2RhdGEvXCIpKVxuXG4jIENyZWF0ZSBvdXRwdXRzIGZvbGRlciBmb3Igc2F2aW5nIGZpZ3VyZXMgYW5kIHJlc3VsdHMgKHJlcXVpcmVkIGJ5IHByb2plY3QgZ3VpZGVsaW5lcylcbmRpci5jcmVhdGUoXCIvaG9tZTEvc2V1bmdnZW8vNDkwX2NsdXN0ZXIvcWJpbzQ5MF9mYTI1X2ZpbmFsX0tJUkMvb3V0cHV0c1wiLCBcbiAgICAgICAgICAgc2hvd1dhcm5pbmdzID0gRkFMU0UsIHJlY3Vyc2l2ZSA9IFRSVUUpXG5gYGAifQ== -->
+<pre class="r"><code># Set your root directory
+knitr::opts_knit$set(root.dir = normalizePath(&quot;/home1/seunggeo/490_cluster/analysis_data/&quot;))
+
+# Create outputs folder for saving figures and results (required by project guidelines)
+dir.create(&quot;/home1/seunggeo/490_cluster/qbio490_fa25_final_KIRC/outputs&quot;, 
+           showWarnings = FALSE, recursive = TRUE)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="section-4" class="section level1">
+<h1>============================================</h1>
+</div>
+<div id="clinical-data-download" class="section level1">
+<h1>Clinical Data Download</h1>
+</div>
+<div id="section-5" class="section level1">
+<h1>============================================</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVZMnhwYmw5eGRXVnllU0E4TFNCSFJFTnhkV1Z5ZVNod2NtOXFaV04wSUQwZ1hDSlVRMGRCTFV0SlVrTmNJaXhjYm1SaGRHRXVZMkYwWldkdmNua2dQU0JjSWtOc2FXNXBZMkZzWENJc1hHNWtZWFJoTG5SNWNHVWdQU0JjSWtOc2FXNXBZMkZzSUZOMWNIQnNaVzFsYm5SY0lpeGNibVJoZEdFdVptOXliV0YwSUQwZ0owSkRVaUJDYVc5MFlXSW5LVnh1UjBSRFpHOTNibXh2WVdRb1kyeHBibDl4ZFdWeWVTbGNibUJnWUNKOSAtLT5cblxuYGBgclxuY2xpbl9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0gXCJUQ0dBLUtJUkNcIixcbmRhdGEuY2F0ZWdvcnkgPSBcIkNsaW5pY2FsXCIsXG5kYXRhLnR5cGUgPSBcIkNsaW5pY2FsIFN1cHBsZW1lbnRcIixcbmRhdGEuZm9ybWF0ID0gJ0JDUiBCaW90YWInKVxuR0RDZG93bmxvYWQoY2xpbl9xdWVyeSlcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xpbl9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0gXCJUQ0dBLUtJUkNcIixcbmRhdGEuY2F0ZWdvcnkgPSBcIkNsaW5pY2FsXCIsXG5kYXRhLnR5cGUgPSBcIkNsaW5pY2FsIFN1cHBsZW1lbnRcIixcbmRhdGEuZm9ybWF0ID0gJ0JDUiBCaW90YWInKVxuR0RDZG93bmxvYWQoY2xpbl9xdWVyeSlcbmBgYCJ9 -->
-<pre class="r"><code>clin_query &lt;- GDCquery(project = &quot;TCGA-KIRC&quot;,
-data.category = &quot;Clinical&quot;,
-data.type = &quot;Clinical Supplement&quot;,
-data.format = &#39;BCR Biotab&#39;)
-GDCdownload(clin_query)</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJFYjNkdWJHOWhaQ0JqYkdsdWFXTmhiQ0J6ZFhCd2JHVnRaVzUwSUdSaGRHRWdLR2x1WTJ4MVpHVnpJR1JsZEdGcGJHVmtJSEJoZEdsbGJuUWdhVzVtYjNKdFlYUnBiMjRwWEc1amJHbHVYM0YxWlhKNUlEd3RJRWRFUTNGMVpYSjVLSEJ5YjJwbFkzUWdQU0JjSWxSRFIwRXRTMGxTUTF3aUxGeHVJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNCa1lYUmhMbU5oZEdWbmIzSjVJRDBnWENKRGJHbHVhV05oYkZ3aUxGeHVJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNCa1lYUmhMblI1Y0dVZ1BTQmNJa05zYVc1cFkyRnNJRk4xY0hCc1pXMWxiblJjSWl4Y2JpQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnWkdGMFlTNW1iM0p0WVhRZ1BTQW5Ra05TSUVKcGIzUmhZaWNwWEc1SFJFTmtiM2R1Ykc5aFpDaGpiR2x1WDNGMVpYSjVLVnh1WTJ4cGJtbGpZV3d1UWtOU2RHRmlMbUZzYkNBOExTQkhSRU53Y21Wd1lYSmxLR05zYVc1ZmNYVmxjbmtwWEc1Y2JpTWdSWGgwY21GamRDQndZWFJwWlc1MElHTnNhVzVwWTJGc0lHUmhkR0VnS0hKbGJXOTJaU0JvWldGa1pYSWdjbTkzY3lsY2JtTnNhVzVwWXlBOExTQmpiR2x1YVdOaGJDNUNRMUowWVdJdVlXeHNKR05zYVc1cFkyRnNYM0JoZEdsbGJuUmZhMmx5WTFzdFl5Z3hMRElwTEYxY2JseHVJeUJGZUhSeVlXTjBJR1J5ZFdjZ1pHRjBZU0FvWm05eUlIUnlaV0YwYldWdWRDQmhibUZzZVhOcGN5QXRJR2hwWjJoc2VTQmxibU52ZFhKaFoyVmtLVnh1WTJ4cGJtbGpYMlJ5ZFdjZ1BDMGdZMnhwYm1sallXd3VRa05TZEdGaUxtRnNiQ1JqYkdsdWFXTmhiRjlrY25WblgydHBjbU5iTFdNb01Td3lLU3hkWEc1Y2JpTWdSWGgwY21GamRDQnlZV1JwWVhScGIyNGdaR0YwWVNBb1ptOXlJSFJ5WldGMGJXVnVkQ0JoYm1Gc2VYTnBjeUF0SUdocFoyaHNlU0JsYm1OdmRYSmhaMlZrS1Z4dVkyeHBibWxqWDNKaFpDQThMU0JqYkdsdWFXTmhiQzVDUTFKMFlXSXVZV3hzSkdOc2FXNXBZMkZzWDNKaFpHbGhkR2x2Ymw5cmFYSmpXeTFqS0RFc01pa3NYVnh1WEc0aklGSmxibUZ0WlNCaVlYSmpiMlJsSUdOdmJIVnRiaUJtYjNJZ1kyOXRjR0YwYVdKcGJHbDBlU0IzYVhSb0lHMWhablJ2YjJ4elhHNWpiMnh1WVcxbGN5aGpiR2x1YVdNcFcyTnZiRzVoYldWektHTnNhVzVwWXlrZ1BUMGdYQ0ppWTNKZmNHRjBhV1Z1ZEY5aVlYSmpiMlJsWENKZElEd3RJRndpVkhWdGIzSmZVMkZ0Y0d4bFgwSmhjbU52WkdWY0lseHVZR0JnSW4wPSAtLT5cblxuYGBgclxuIyBEb3dubG9hZCBjbGluaWNhbCBzdXBwbGVtZW50IGRhdGEgKGluY2x1ZGVzIGRldGFpbGVkIHBhdGllbnQgaW5mb3JtYXRpb24pXG5jbGluX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KHByb2plY3QgPSBcIlRDR0EtS0lSQ1wiLFxuICAgICAgICAgICAgICAgICAgICAgICBkYXRhLmNhdGVnb3J5ID0gXCJDbGluaWNhbFwiLFxuICAgICAgICAgICAgICAgICAgICAgICBkYXRhLnR5cGUgPSBcIkNsaW5pY2FsIFN1cHBsZW1lbnRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgZGF0YS5mb3JtYXQgPSAnQkNSIEJpb3RhYicpXG5HRENkb3dubG9hZChjbGluX3F1ZXJ5KVxuY2xpbmljYWwuQkNSdGFiLmFsbCA8LSBHRENwcmVwYXJlKGNsaW5fcXVlcnkpXG5cbiMgRXh0cmFjdCBwYXRpZW50IGNsaW5pY2FsIGRhdGEgKHJlbW92ZSBoZWFkZXIgcm93cylcbmNsaW5pYyA8LSBjbGluaWNhbC5CQ1J0YWIuYWxsJGNsaW5pY2FsX3BhdGllbnRfa2lyY1stYygxLDIpLF1cblxuIyBFeHRyYWN0IGRydWcgZGF0YSAoZm9yIHRyZWF0bWVudCBhbmFseXNpcyAtIGhpZ2hseSBlbmNvdXJhZ2VkKVxuY2xpbmljX2RydWcgPC0gY2xpbmljYWwuQkNSdGFiLmFsbCRjbGluaWNhbF9kcnVnX2tpcmNbLWMoMSwyKSxdXG5cbiMgRXh0cmFjdCByYWRpYXRpb24gZGF0YSAoZm9yIHRyZWF0bWVudCBhbmFseXNpcyAtIGhpZ2hseSBlbmNvdXJhZ2VkKVxuY2xpbmljX3JhZCA8LSBjbGluaWNhbC5CQ1J0YWIuYWxsJGNsaW5pY2FsX3JhZGlhdGlvbl9raXJjWy1jKDEsMiksXVxuXG4jIFJlbmFtZSBiYXJjb2RlIGNvbHVtbiBmb3IgY29tcGF0aWJpbGl0eSB3aXRoIG1hZnRvb2xzXG5jb2xuYW1lcyhjbGluaWMpW2NvbG5hbWVzKGNsaW5pYykgPT0gXCJiY3JfcGF0aWVudF9iYXJjb2RlXCJdIDwtIFwiVHVtb3JfU2FtcGxlX0JhcmNvZGVcIlxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBEb3dubG9hZCBjbGluaWNhbCBzdXBwbGVtZW50IGRhdGEgKGluY2x1ZGVzIGRldGFpbGVkIHBhdGllbnQgaW5mb3JtYXRpb24pXG5jbGluX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KHByb2plY3QgPSBcIlRDR0EtS0lSQ1wiLFxuICAgICAgICAgICAgICAgICAgICAgICBkYXRhLmNhdGVnb3J5ID0gXCJDbGluaWNhbFwiLFxuICAgICAgICAgICAgICAgICAgICAgICBkYXRhLnR5cGUgPSBcIkNsaW5pY2FsIFN1cHBsZW1lbnRcIixcbiAgICAgICAgICAgICAgICAgICAgICAgZGF0YS5mb3JtYXQgPSAnQkNSIEJpb3RhYicpXG5HRENkb3dubG9hZChjbGluX3F1ZXJ5KVxuY2xpbmljYWwuQkNSdGFiLmFsbCA8LSBHRENwcmVwYXJlKGNsaW5fcXVlcnkpXG5cbiMgRXh0cmFjdCBwYXRpZW50IGNsaW5pY2FsIGRhdGEgKHJlbW92ZSBoZWFkZXIgcm93cylcbmNsaW5pYyA8LSBjbGluaWNhbC5CQ1J0YWIuYWxsJGNsaW5pY2FsX3BhdGllbnRfa2lyY1stYygxLDIpLF1cblxuIyBFeHRyYWN0IGRydWcgZGF0YSAoZm9yIHRyZWF0bWVudCBhbmFseXNpcyAtIGhpZ2hseSBlbmNvdXJhZ2VkKVxuY2xpbmljX2RydWcgPC0gY2xpbmljYWwuQkNSdGFiLmFsbCRjbGluaWNhbF9kcnVnX2tpcmNbLWMoMSwyKSxdXG5cbiMgRXh0cmFjdCByYWRpYXRpb24gZGF0YSAoZm9yIHRyZWF0bWVudCBhbmFseXNpcyAtIGhpZ2hseSBlbmNvdXJhZ2VkKVxuY2xpbmljX3JhZCA8LSBjbGluaWNhbC5CQ1J0YWIuYWxsJGNsaW5pY2FsX3JhZGlhdGlvbl9raXJjWy1jKDEsMiksXVxuXG4jIFJlbmFtZSBiYXJjb2RlIGNvbHVtbiBmb3IgY29tcGF0aWJpbGl0eSB3aXRoIG1hZnRvb2xzXG5jb2xuYW1lcyhjbGluaWMpW2NvbG5hbWVzKGNsaW5pYykgPT0gXCJiY3JfcGF0aWVudF9iYXJjb2RlXCJdIDwtIFwiVHVtb3JfU2FtcGxlX0JhcmNvZGVcIlxuYGBgIn0= -->
+<pre class="r"><code># Download clinical supplement data (includes detailed patient information)
+clin_query &lt;- GDCquery(project = &quot;TCGA-KIRC&quot;,
+                       data.category = &quot;Clinical&quot;,
+                       data.type = &quot;Clinical Supplement&quot;,
+                       data.format = &#39;BCR Biotab&#39;)
+GDCdownload(clin_query)
+clinical.BCRtab.all &lt;- GDCprepare(clin_query)
+
+# Extract patient clinical data (remove header rows)
+clinic &lt;- clinical.BCRtab.all$clinical_patient_kirc[-c(1,2),]
+
+# Extract drug data (for treatment analysis - highly encouraged)
+clinic_drug &lt;- clinical.BCRtab.all$clinical_drug_kirc[-c(1,2),]
+
+# Extract radiation data (for treatment analysis - highly encouraged)
+clinic_rad &lt;- clinical.BCRtab.all$clinical_radiation_kirc[-c(1,2),]
+
+# Rename barcode column for compatibility with maftools
+colnames(clinic)[colnames(clinic) == &quot;bcr_patient_barcode&quot;] &lt;- &quot;Tumor_Sample_Barcode&quot;</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5Eb3dubG9hZGluZzogNy45IGtCICAgICBcbkRvd25sb2FkaW5nOiA3Ljkga0IgICAgIFxuRG93bmxvYWRpbmc6IDcuOSBrQiAgICAgXG5Eb3dubG9hZGluZzogNy45IGtCICAgICBcbkRvd25sb2FkaW5nOiA3Ljkga0IgICAgIFxuRG93bmxvYWRpbmc6IDcuOSBrQiAgICAgXG5Eb3dubG9hZGluZzogNy45IGtCICAgICBcbkRvd25sb2FkaW5nOiA3Ljkga0IgICAgIFxuRG93bmxvYWRpbmc6IDI1IGtCICAgICBcbkRvd25sb2FkaW5nOiAyNSBrQiAgICAgXG5Eb3dubG9hZGluZzogMjUga0IgICAgIFxuRG93bmxvYWRpbmc6IDI1IGtCICAgICBcbkRvd25sb2FkaW5nOiAyNSBrQiAgICAgXG5Eb3dubG9hZGluZzogMjUga0IgICAgIFxuRG93bmxvYWRpbmc6IDMzIGtCICAgICBcbkRvd25sb2FkaW5nOiAzMyBrQiAgICAgXG5Eb3dubG9hZGluZzogNDkga0IgICAgIFxuRG93bmxvYWRpbmc6IDQ5IGtCICAgICBcbkRvd25sb2FkaW5nOiA0OSBrQiAgICAgXG5Eb3dubG9hZGluZzogNDkga0IgICAgIFxuRG93bmxvYWRpbmc6IDU3IGtCICAgICBcbkRvd25sb2FkaW5nOiA1NyBrQiAgICAgXG5Eb3dubG9hZGluZzogNTcga0IgICAgIFxuRG93bmxvYWRpbmc6IDU3IGtCICAgICBcbkRvd25sb2FkaW5nOiA4MiBrQiAgICAgXG5Eb3dubG9hZGluZzogODIga0IgICAgIFxuRG93bmxvYWRpbmc6IDgyIGtCICAgICBcbkRvd25sb2FkaW5nOiA4MiBrQiAgICAgXG5Eb3dubG9hZGluZzogOTgga0IgICAgIFxuRG93bmxvYWRpbmc6IDk4IGtCICAgICBcbkRvd25sb2FkaW5nOiAxMDAga0IgICAgIFxuRG93bmxvYWRpbmc6IDEwMCBrQiAgICAgXG5Eb3dubG9hZGluZzogMTAwIGtCICAgICBcbkRvd25sb2FkaW5nOiAxMDAga0IgICAgIFxuIn0= -->
-<pre><code>
-Downloading: 7.9 kB     
-Downloading: 7.9 kB     
-Downloading: 7.9 kB     
-Downloading: 7.9 kB     
-Downloading: 7.9 kB     
-Downloading: 7.9 kB     
-Downloading: 7.9 kB     
-Downloading: 7.9 kB     
-Downloading: 25 kB     
-Downloading: 25 kB     
-Downloading: 25 kB     
-Downloading: 25 kB     
-Downloading: 25 kB     
-Downloading: 25 kB     
-Downloading: 33 kB     
-Downloading: 33 kB     
-Downloading: 49 kB     
-Downloading: 49 kB     
-Downloading: 49 kB     
-Downloading: 49 kB     
-Downloading: 57 kB     
-Downloading: 57 kB     
-Downloading: 57 kB     
-Downloading: 57 kB     
-Downloading: 82 kB     
-Downloading: 82 kB     
-Downloading: 82 kB     
-Downloading: 82 kB     
-Downloading: 98 kB     
-Downloading: 98 kB     
-Downloading: 100 kB     
-Downloading: 100 kB     
-Downloading: 100 kB     
-Downloading: 100 kB     </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVZMnhwYm1sallXd3VRa05TZEdGaUxtRnNiQ0E4TFNCSFJFTndjbVZ3WVhKbEtHTnNhVzVmY1hWbGNua3BYRzVnWUdBaWZRPT0gLS0+XG5cbmBgYHJcbmNsaW5pY2FsLkJDUnRhYi5hbGwgPC0gR0RDcHJlcGFyZShjbGluX3F1ZXJ5KVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xpbmljYWwuQkNSdGFiLmFsbCA8LSBHRENwcmVwYXJlKGNsaW5fcXVlcnkpXG5gYGAifQ== -->
-<pre class="r"><code>clinical.BCRtab.all &lt;- GDCprepare(clin_query)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG4gIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMCVcbiAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG4gIHw9PT09PT09PT09PSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDE3JVxuICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgfD09PT09PT09PT09PT09PT09PT09PT0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMzMlXG4gIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuICB8PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA1MCVcbiAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG4gIHw9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICAgICAgICAgICAgICAgICAgICAgIHwgIDY3JVxuICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgfD09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAgICAgICAgICAgfCAgODMlXG4gIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuICB8PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT18IDEwMCVcbiJ9 -->
-<pre><code>
-  |                                                                       
-  |                                                                 |   0%
-  |                                                                       
-  |===========                                                      |  17%
-  |                                                                       
-  |======================                                           |  33%
-  |                                                                       
-  |================================                                 |  50%
-  |                                                                       
-  |===========================================                      |  67%
-  |                                                                       
-  |======================================================           |  83%
-  |                                                                       
-  |=================================================================| 100%</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVZMnhwYm1saklEd3RJR05zYVc1cFkyRnNMa0pEVW5SaFlpNWhiR3drWTJ4cGJtbGpZV3hmY0dGMGFXVnVkRjlyYVhKald5MWpLREVzTWlrc1hWeHVZR0JnSW4wPSAtLT5cblxuYGBgclxuY2xpbmljIDwtIGNsaW5pY2FsLkJDUnRhYi5hbGwkY2xpbmljYWxfcGF0aWVudF9raXJjWy1jKDEsMiksXVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xpbmljIDwtIGNsaW5pY2FsLkJDUnRhYi5hbGwkY2xpbmljYWxfcGF0aWVudF9raXJjWy1jKDEsMiksXVxuYGBgIn0= -->
-<pre class="r"><code>clinic &lt;- clinical.BCRtab.all$clinical_patient_kirc[-c(1,2),]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="section-6" class="section level1">
+<h1>============================================</h1>
+</div>
+<div id="maf-mutation-data-download" class="section level1">
+<h1>MAF (Mutation) Data Download</h1>
+</div>
+<div id="section-7" class="section level1">
+<h1>============================================</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJ5ZFc0Z2RHaHBjeUJzWVhSbGNseHVZMjlzYm1GdFpYTW9ZMnhwYm1saktWc2dZMjlzYm1GdFpYTW9ZMnhwYm1saktTQTlQU0JjSW1KamNsOXdZWFJwWlc1MFgySmhjbU52WkdWY0lpQmRJRHd0WEc1Y0lsUjFiVzl5WDFOaGJYQnNaVjlDWVhKamIyUmxYQ0pjYm0xaFpsOXhkV1Z5ZVNBOExTQkhSRU54ZFdWeWVTaGNibkJ5YjJwbFkzUWdQU0JjSWxSRFIwRXRTMGxTUTF3aUxGeHVaR0YwWVM1allYUmxaMjl5ZVNBOUlGd2lVMmx0Y0d4bElFNTFZMnhsYjNScFpHVWdWbUZ5YVdGMGFXOXVYQ0lzWEc1aFkyTmxjM01nUFNCY0ltOXdaVzVjSWl4Y2JtUmhkR0V1ZEhsd1pTQTlJRndpVFdGemEyVmtJRk52YldGMGFXTWdUWFYwWVhScGIyNWNJaXhjYm5kdmNtdG1iRzkzTG5SNWNHVWdQU0JjSWtGc2FYRjFiM1FnUlc1elpXMWliR1VnVTI5dFlYUnBZeUJXWVhKcFlXNTBJRTFsY21kcGJtY2dZVzVrSUUxaGMydHBibWRjSWx4dUtWeHVSMFJEWkc5M2JteHZZV1FvYldGbVgzRjFaWEo1TENCdFpYUm9iMlFnUFNCY0ltRndhVndpTENCbWFXeGxjeTV3WlhJdVkyaDFibXNnUFNBeE1EQXBYRzV0WVdZZ1BDMGdSMFJEY0hKbGNHRnlaU2h0WVdaZmNYVmxjbmtwWEc1dFlXWmZiMkpxWldOMElEd3RJSEpsWVdRdWJXRm1LRzFoWmlBOUlHMWhaaXhjYm1Oc2FXNXBZMkZzUkdGMFlTQTlJR05zYVc1cFl5eGNibWx6VkVOSFFTQTlJRlJTVlVVcFhHNWdZR0FpZlE9PSAtLT5cblxuYGBgclxuIyBydW4gdGhpcyBsYXRlclxuY29sbmFtZXMoY2xpbmljKVsgY29sbmFtZXMoY2xpbmljKSA9PSBcImJjcl9wYXRpZW50X2JhcmNvZGVcIiBdIDwtXG5cIlR1bW9yX1NhbXBsZV9CYXJjb2RlXCJcbm1hZl9xdWVyeSA8LSBHRENxdWVyeShcbnByb2plY3QgPSBcIlRDR0EtS0lSQ1wiLFxuZGF0YS5jYXRlZ29yeSA9IFwiU2ltcGxlIE51Y2xlb3RpZGUgVmFyaWF0aW9uXCIsXG5hY2Nlc3MgPSBcIm9wZW5cIixcbmRhdGEudHlwZSA9IFwiTWFza2VkIFNvbWF0aWMgTXV0YXRpb25cIixcbndvcmtmbG93LnR5cGUgPSBcIkFsaXF1b3QgRW5zZW1ibGUgU29tYXRpYyBWYXJpYW50IE1lcmdpbmcgYW5kIE1hc2tpbmdcIlxuKVxuR0RDZG93bmxvYWQobWFmX3F1ZXJ5LCBtZXRob2QgPSBcImFwaVwiLCBmaWxlcy5wZXIuY2h1bmsgPSAxMDApXG5tYWYgPC0gR0RDcHJlcGFyZShtYWZfcXVlcnkpXG5tYWZfb2JqZWN0IDwtIHJlYWQubWFmKG1hZiA9IG1hZixcbmNsaW5pY2FsRGF0YSA9IGNsaW5pYyxcbmlzVENHQSA9IFRSVUUpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBydW4gdGhpcyBsYXRlclxuY29sbmFtZXMoY2xpbmljKVsgY29sbmFtZXMoY2xpbmljKSA9PSBcImJjcl9wYXRpZW50X2JhcmNvZGVcIiBdIDwtXG5cIlR1bW9yX1NhbXBsZV9CYXJjb2RlXCJcbm1hZl9xdWVyeSA8LSBHRENxdWVyeShcbnByb2plY3QgPSBcIlRDR0EtS0lSQ1wiLFxuZGF0YS5jYXRlZ29yeSA9IFwiU2ltcGxlIE51Y2xlb3RpZGUgVmFyaWF0aW9uXCIsXG5hY2Nlc3MgPSBcIm9wZW5cIixcbmRhdGEudHlwZSA9IFwiTWFza2VkIFNvbWF0aWMgTXV0YXRpb25cIixcbndvcmtmbG93LnR5cGUgPSBcIkFsaXF1b3QgRW5zZW1ibGUgU29tYXRpYyBWYXJpYW50IE1lcmdpbmcgYW5kIE1hc2tpbmdcIlxuKVxuR0RDZG93bmxvYWQobWFmX3F1ZXJ5LCBtZXRob2QgPSBcImFwaVwiLCBmaWxlcy5wZXIuY2h1bmsgPSAxMDApXG5tYWYgPC0gR0RDcHJlcGFyZShtYWZfcXVlcnkpXG5tYWZfb2JqZWN0IDwtIHJlYWQubWFmKG1hZiA9IG1hZixcbmNsaW5pY2FsRGF0YSA9IGNsaW5pYyxcbmlzVENHQSA9IFRSVUUpXG5gYGAifQ== -->
-<pre class="r"><code># run this later
-colnames(clinic)[ colnames(clinic) == &quot;bcr_patient_barcode&quot; ] &lt;-
-&quot;Tumor_Sample_Barcode&quot;
-maf_query &lt;- GDCquery(
-project = &quot;TCGA-KIRC&quot;,
-data.category = &quot;Simple Nucleotide Variation&quot;,
-access = &quot;open&quot;,
-data.type = &quot;Masked Somatic Mutation&quot;,
-workflow.type = &quot;Aliquot Ensemble Somatic Variant Merging and Masking&quot;
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHViV0ZtWDNGMVpYSjVJRHd0SUVkRVEzRjFaWEo1S0Z4dUlDQndjbTlxWldOMElEMGdYQ0pVUTBkQkxVdEpVa05jSWl4Y2JpQWdaR0YwWVM1allYUmxaMjl5ZVNBOUlGd2lVMmx0Y0d4bElFNTFZMnhsYjNScFpHVWdWbUZ5YVdGMGFXOXVYQ0lzWEc0Z0lHRmpZMlZ6Y3lBOUlGd2liM0JsYmx3aUxGeHVJQ0JrWVhSaExuUjVjR1VnUFNCY0lrMWhjMnRsWkNCVGIyMWhkR2xqSUUxMWRHRjBhVzl1WENJc1hHNGdJSGR2Y210bWJHOTNMblI1Y0dVZ1BTQmNJa0ZzYVhGMWIzUWdSVzV6WlcxaWJHVWdVMjl0WVhScFl5QldZWEpwWVc1MElFMWxjbWRwYm1jZ1lXNWtJRTFoYzJ0cGJtZGNJbHh1S1Z4dVIwUkRaRzkzYm14dllXUW9iV0ZtWDNGMVpYSjVMQ0J0WlhSb2IyUWdQU0JjSW1Gd2FWd2lMQ0JtYVd4bGN5NXdaWEl1WTJoMWJtc2dQU0F4TURBcFhHNXRZV1lnUEMwZ1IwUkRjSEpsY0dGeVpTaHRZV1pmY1hWbGNua3BYRzVjYmlNZ1EzSmxZWFJsSUcxaFppQnZZbXBsWTNRZ2QybDBhQ0JqYkdsdWFXTmhiQ0JoYm01dmRHRjBhVzl1YzF4dWJXRm1YMjlpYW1WamRDQThMU0J5WldGa0xtMWhaaWh0WVdZZ1BTQnRZV1lzWEc0Z0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJR05zYVc1cFkyRnNSR0YwWVNBOUlHTnNhVzVwWXl4Y2JpQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnYVhOVVEwZEJJRDBnVkZKVlJTbGNibUJnWUNKOSAtLT5cblxuYGBgclxubWFmX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KFxuICBwcm9qZWN0ID0gXCJUQ0dBLUtJUkNcIixcbiAgZGF0YS5jYXRlZ29yeSA9IFwiU2ltcGxlIE51Y2xlb3RpZGUgVmFyaWF0aW9uXCIsXG4gIGFjY2VzcyA9IFwib3BlblwiLFxuICBkYXRhLnR5cGUgPSBcIk1hc2tlZCBTb21hdGljIE11dGF0aW9uXCIsXG4gIHdvcmtmbG93LnR5cGUgPSBcIkFsaXF1b3QgRW5zZW1ibGUgU29tYXRpYyBWYXJpYW50IE1lcmdpbmcgYW5kIE1hc2tpbmdcIlxuKVxuR0RDZG93bmxvYWQobWFmX3F1ZXJ5LCBtZXRob2QgPSBcImFwaVwiLCBmaWxlcy5wZXIuY2h1bmsgPSAxMDApXG5tYWYgPC0gR0RDcHJlcGFyZShtYWZfcXVlcnkpXG5cbiMgQ3JlYXRlIG1hZiBvYmplY3Qgd2l0aCBjbGluaWNhbCBhbm5vdGF0aW9uc1xubWFmX29iamVjdCA8LSByZWFkLm1hZihtYWYgPSBtYWYsXG4gICAgICAgICAgICAgICAgICAgICAgIGNsaW5pY2FsRGF0YSA9IGNsaW5pYyxcbiAgICAgICAgICAgICAgICAgICAgICAgaXNUQ0dBID0gVFJVRSlcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFmX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KFxuICBwcm9qZWN0ID0gXCJUQ0dBLUtJUkNcIixcbiAgZGF0YS5jYXRlZ29yeSA9IFwiU2ltcGxlIE51Y2xlb3RpZGUgVmFyaWF0aW9uXCIsXG4gIGFjY2VzcyA9IFwib3BlblwiLFxuICBkYXRhLnR5cGUgPSBcIk1hc2tlZCBTb21hdGljIE11dGF0aW9uXCIsXG4gIHdvcmtmbG93LnR5cGUgPSBcIkFsaXF1b3QgRW5zZW1ibGUgU29tYXRpYyBWYXJpYW50IE1lcmdpbmcgYW5kIE1hc2tpbmdcIlxuKVxuR0RDZG93bmxvYWQobWFmX3F1ZXJ5LCBtZXRob2QgPSBcImFwaVwiLCBmaWxlcy5wZXIuY2h1bmsgPSAxMDApXG5tYWYgPC0gR0RDcHJlcGFyZShtYWZfcXVlcnkpXG5cbiMgQ3JlYXRlIG1hZiBvYmplY3Qgd2l0aCBjbGluaWNhbCBhbm5vdGF0aW9uc1xubWFmX29iamVjdCA8LSByZWFkLm1hZihtYWYgPSBtYWYsXG4gICAgICAgICAgICAgICAgICAgICAgIGNsaW5pY2FsRGF0YSA9IGNsaW5pYyxcbiAgICAgICAgICAgICAgICAgICAgICAgaXNUQ0dBID0gVFJVRSlcbmBgYCJ9 -->
+<pre class="r"><code>maf_query &lt;- GDCquery(
+  project = &quot;TCGA-KIRC&quot;,
+  data.category = &quot;Simple Nucleotide Variation&quot;,
+  access = &quot;open&quot;,
+  data.type = &quot;Masked Somatic Mutation&quot;,
+  workflow.type = &quot;Aliquot Ensemble Somatic Variant Merging and Masking&quot;
 )
 GDCdownload(maf_query, method = &quot;api&quot;, files.per.chunk = 100)
 maf &lt;- GDCprepare(maf_query)
+
+# Create maf object with clinical annotations
 maf_object &lt;- read.maf(maf = maf,
-clinicalData = clinic,
-isTCGA = TRUE)</code></pre>
+                       clinicalData = clinic,
+                       isTCGA = TRUE)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="section-8" class="section level1">
+<h1>============================================</h1>
+</div>
+<div id="rna-seq-data-download" class="section level1">
+<h1>RNA-seq Data Download</h1>
+</div>
+<div id="section-9" class="section level1">
+<h1>============================================</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJ5ZFc0Z2RHaHBjeUJzWVhSbGNseHVjbTVoWDNGMVpYSjVJRHd0SUVkRVEzRjFaWEo1S0hCeWIycGxZM1FnUFZ3aVZFTkhRUzFMU1ZKRFhDSXNYRzVrWVhSaExtTmhkR1ZuYjNKNUlEMGdYQ0pVY21GdWMyTnlhWEIwYjIxbElGQnliMlpwYkdsdVoxd2lMRnh1WkdGMFlTNTBlWEJsSUQwZ1hDSkhaVzVsSUVWNGNISmxjM05wYjI0Z1VYVmhiblJwWm1sallYUnBiMjVjSWl4Y2JuZHZjbXRtYkc5M0xuUjVjR1VnUFNCY0lsTlVRVklnTFNCRGIzVnVkSE5jSWlsY2JrZEVRMlJ2ZDI1c2IyRmtLSEp1WVY5eGRXVnllU2xjYm5KdVlWOXpaU0E4TFNCSFJFTndjbVZ3WVhKbEtISnVZVjl4ZFdWeWVTbGNibUJnWUNKOSAtLT5cblxuYGBgclxuIyBydW4gdGhpcyBsYXRlclxucm5hX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KHByb2plY3QgPVwiVENHQS1LSVJDXCIsXG5kYXRhLmNhdGVnb3J5ID0gXCJUcmFuc2NyaXB0b21lIFByb2ZpbGluZ1wiLFxuZGF0YS50eXBlID0gXCJHZW5lIEV4cHJlc3Npb24gUXVhbnRpZmljYXRpb25cIixcbndvcmtmbG93LnR5cGUgPSBcIlNUQVIgLSBDb3VudHNcIilcbkdEQ2Rvd25sb2FkKHJuYV9xdWVyeSlcbnJuYV9zZSA8LSBHRENwcmVwYXJlKHJuYV9xdWVyeSlcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBydW4gdGhpcyBsYXRlclxucm5hX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KHByb2plY3QgPVwiVENHQS1LSVJDXCIsXG5kYXRhLmNhdGVnb3J5ID0gXCJUcmFuc2NyaXB0b21lIFByb2ZpbGluZ1wiLFxuZGF0YS50eXBlID0gXCJHZW5lIEV4cHJlc3Npb24gUXVhbnRpZmljYXRpb25cIixcbndvcmtmbG93LnR5cGUgPSBcIlNUQVIgLSBDb3VudHNcIilcbkdEQ2Rvd25sb2FkKHJuYV9xdWVyeSlcbnJuYV9zZSA8LSBHRENwcmVwYXJlKHJuYV9xdWVyeSlcbmBgYCJ9 -->
-<pre class="r"><code># run this later
-rna_query &lt;- GDCquery(project =&quot;TCGA-KIRC&quot;,
-data.category = &quot;Transcriptome Profiling&quot;,
-data.type = &quot;Gene Expression Quantification&quot;,
-workflow.type = &quot;STAR - Counts&quot;)
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVjbTVoWDNGMVpYSjVJRHd0SUVkRVEzRjFaWEo1S0hCeWIycGxZM1FnUFNCY0lsUkRSMEV0UzBsU1Exd2lMRnh1SUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lHUmhkR0V1WTJGMFpXZHZjbmtnUFNCY0lsUnlZVzV6WTNKcGNIUnZiV1VnVUhKdlptbHNhVzVuWENJc1hHNGdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnWkdGMFlTNTBlWEJsSUQwZ1hDSkhaVzVsSUVWNGNISmxjM05wYjI0Z1VYVmhiblJwWm1sallYUnBiMjVjSWl4Y2JpQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0IzYjNKclpteHZkeTUwZVhCbElEMGdYQ0pUVkVGU0lDMGdRMjkxYm5SelhDSXBYRzVIUkVOa2IzZHViRzloWkNoeWJtRmZjWFZsY25rcFhHNXlibUZmYzJVZ1BDMGdSMFJEY0hKbGNHRnlaU2h5Ym1GZmNYVmxjbmtwWEc1Z1lHQWlmUT09IC0tPlxuXG5gYGByXG5ybmFfcXVlcnkgPC0gR0RDcXVlcnkocHJvamVjdCA9IFwiVENHQS1LSVJDXCIsXG4gICAgICAgICAgICAgICAgICAgICAgZGF0YS5jYXRlZ29yeSA9IFwiVHJhbnNjcmlwdG9tZSBQcm9maWxpbmdcIixcbiAgICAgICAgICAgICAgICAgICAgICBkYXRhLnR5cGUgPSBcIkdlbmUgRXhwcmVzc2lvbiBRdWFudGlmaWNhdGlvblwiLFxuICAgICAgICAgICAgICAgICAgICAgIHdvcmtmbG93LnR5cGUgPSBcIlNUQVIgLSBDb3VudHNcIilcbkdEQ2Rvd25sb2FkKHJuYV9xdWVyeSlcbnJuYV9zZSA8LSBHRENwcmVwYXJlKHJuYV9xdWVyeSlcbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm5hX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KHByb2plY3QgPSBcIlRDR0EtS0lSQ1wiLFxuICAgICAgICAgICAgICAgICAgICAgIGRhdGEuY2F0ZWdvcnkgPSBcIlRyYW5zY3JpcHRvbWUgUHJvZmlsaW5nXCIsXG4gICAgICAgICAgICAgICAgICAgICAgZGF0YS50eXBlID0gXCJHZW5lIEV4cHJlc3Npb24gUXVhbnRpZmljYXRpb25cIixcbiAgICAgICAgICAgICAgICAgICAgICB3b3JrZmxvdy50eXBlID0gXCJTVEFSIC0gQ291bnRzXCIpXG5HRENkb3dubG9hZChybmFfcXVlcnkpXG5ybmFfc2UgPC0gR0RDcHJlcGFyZShybmFfcXVlcnkpXG5gYGAifQ== -->
+<pre class="r"><code>rna_query &lt;- GDCquery(project = &quot;TCGA-KIRC&quot;,
+                      data.category = &quot;Transcriptome Profiling&quot;,
+                      data.type = &quot;Gene Expression Quantification&quot;,
+                      workflow.type = &quot;STAR - Counts&quot;)
 GDCdownload(rna_query)
 rna_se &lt;- GDCprepare(rna_query)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="section-10" class="section level1">
+<h1>============================================</h1>
+</div>
+<div id="methylation-data-download-required---currently-missing" class="section level1">
+<h1>Methylation Data Download (REQUIRED - currently missing)</h1>
+</div>
+<div id="section-11" class="section level1">
+<h1>============================================</h1>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJFYjNkdWJHOWhaQ0J0WlhSb2VXeGhkR2x2YmlCa1lYUmhJQ2cwTlRCTElHRnljbUY1S1Z4dUkyMWxkR2hmY1hWbGNua2dQQzBnUjBSRGNYVmxjbmtvY0hKdmFtVmpkQ0E5SUZ3aVZFTkhRUzFMU1ZKRFhDSXNYRzRqSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQmtZWFJoTG1OaGRHVm5iM0o1SUQwZ1hDSkVUa0VnVFdWMGFIbHNZWFJwYjI1Y0lpeGNiaU1nSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lHUmhkR0V1ZEhsd1pTQTlJRndpVFdWMGFIbHNZWFJwYjI0Z1FtVjBZU0JXWVd4MVpWd2lMRnh1SXlBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdjR3hoZEdadmNtMGdQU0JjSWtsc2JIVnRhVzVoSUVoMWJXRnVJRTFsZEdoNWJHRjBhVzl1SURRMU1Gd2lLVnh1STBkRVEyUnZkMjVzYjJGa0tHMWxkR2hmY1hWbGNua3BYRzRqYldWMGFGOXpaU0E4TFNCSFJFTndjbVZ3WVhKbEtHMWxkR2hmY1hWbGNua3BYRzVjYmlNZ1JHOTNibXh2WVdRZ2JXVjBhSGxzWVhScGIyNGdaR0YwWVNBb05EVXdTeUJoY25KaGVTbGNibTFsZEdoZmNYVmxjbmtnUEMwZ1IwUkRjWFZsY25rb2NISnZhbVZqZENBOUlGd2lWRU5IUVMxTFNWSkRYQ0lzWEc0Z0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJR1JoZEdFdVkyRjBaV2R2Y25rZ1BTQmNJa1JPUVNCTlpYUm9lV3hoZEdsdmJsd2lMRnh1SUNBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQmtZWFJoTG5SNWNHVWdQU0JjSWsxbGRHaDViR0YwYVc5dUlFSmxkR0VnVm1Gc2RXVmNJaXhjYmlBZ0lDQWdJQ0FnSUNBZ0lDQWdJQ0FnSUNBZ0lDQWdjR3hoZEdadmNtMGdQU0JjSWtsc2JIVnRhVzVoSUVoMWJXRnVJRTFsZEdoNWJHRjBhVzl1SURRMU1Gd2lLVnh1WEc0aklFTnNaV0Z5SUdGdWVTQmpiM0p5ZFhCMFpXUWdjSEpsZG1sdmRYTWdaRzkzYm14dllXUWdZWFIwWlcxd2RITmNibWxtSUNoa2FYSXVaWGhwYzNSektGd2lSMFJEWkdGMFlWd2lLU2tnZTF4dUlDQjFibXhwYm1zb1hDSkhSRU5rWVhSaFhDSXNJSEpsWTNWeWMybDJaU0E5SUZSU1ZVVXBYRzU5WEc1Y2JpTWdSRzkzYm14dllXUWdkMmwwYUNCemJXRnNiR1Z5SUdOb2RXNXJjeUJoYm1RZ2JXOXlaU0J5WlhSeWFXVnpYRzVIUkVOa2IzZHViRzloWkNodFpYUm9YM0YxWlhKNUxDQmNiaUFnSUNBZ0lDQWdJQ0FnSUcxbGRHaHZaQ0E5SUZ3aVlYQnBYQ0lzWEc0Z0lDQWdJQ0FnSUNBZ0lDQm1hV3hsY3k1d1pYSXVZMmgxYm1zZ1BTQTJLVnh1WEc0aklGQnlaWEJoY21VZ2RHaGxJR1JoZEdGY2JtMWxkR2hmYzJVZ1BDMGdSMFJEY0hKbGNHRnlaU2h0WlhSb1gzRjFaWEo1S1Z4dVlHQmdJbjA9IC0tPlxuXG5gYGByXG4jIERvd25sb2FkIG1ldGh5bGF0aW9uIGRhdGEgKDQ1MEsgYXJyYXkpXG4jbWV0aF9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0gXCJUQ0dBLUtJUkNcIixcbiMgICAgICAgICAgICAgICAgICAgICAgIGRhdGEuY2F0ZWdvcnkgPSBcIkROQSBNZXRoeWxhdGlvblwiLFxuIyAgICAgICAgICAgICAgICAgICAgICAgZGF0YS50eXBlID0gXCJNZXRoeWxhdGlvbiBCZXRhIFZhbHVlXCIsXG4jICAgICAgICAgICAgICAgICAgICAgICBwbGF0Zm9ybSA9IFwiSWxsdW1pbmEgSHVtYW4gTWV0aHlsYXRpb24gNDUwXCIpXG4jR0RDZG93bmxvYWQobWV0aF9xdWVyeSlcbiNtZXRoX3NlIDwtIEdEQ3ByZXBhcmUobWV0aF9xdWVyeSlcblxuIyBEb3dubG9hZCBtZXRoeWxhdGlvbiBkYXRhICg0NTBLIGFycmF5KVxubWV0aF9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0gXCJUQ0dBLUtJUkNcIixcbiAgICAgICAgICAgICAgICAgICAgICAgZGF0YS5jYXRlZ29yeSA9IFwiRE5BIE1ldGh5bGF0aW9uXCIsXG4gICAgICAgICAgICAgICAgICAgICAgIGRhdGEudHlwZSA9IFwiTWV0aHlsYXRpb24gQmV0YSBWYWx1ZVwiLFxuICAgICAgICAgICAgICAgICAgICAgICBwbGF0Zm9ybSA9IFwiSWxsdW1pbmEgSHVtYW4gTWV0aHlsYXRpb24gNDUwXCIpXG5cbiMgQ2xlYXIgYW55IGNvcnJ1cHRlZCBwcmV2aW91cyBkb3dubG9hZCBhdHRlbXB0c1xuaWYgKGRpci5leGlzdHMoXCJHRENkYXRhXCIpKSB7XG4gIHVubGluayhcIkdEQ2RhdGFcIiwgcmVjdXJzaXZlID0gVFJVRSlcbn1cblxuIyBEb3dubG9hZCB3aXRoIHNtYWxsZXIgY2h1bmtzIGFuZCBtb3JlIHJldHJpZXNcbkdEQ2Rvd25sb2FkKG1ldGhfcXVlcnksIFxuICAgICAgICAgICAgbWV0aG9kID0gXCJhcGlcIixcbiAgICAgICAgICAgIGZpbGVzLnBlci5jaHVuayA9IDYpXG5cbiMgUHJlcGFyZSB0aGUgZGF0YVxubWV0aF9zZSA8LSBHRENwcmVwYXJlKG1ldGhfcXVlcnkpXG5gYGBcblxuPCEtLSBybmItc291cmNlLWVuZCAtLT5cbiJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBEb3dubG9hZCBtZXRoeWxhdGlvbiBkYXRhICg0NTBLIGFycmF5KVxuI21ldGhfcXVlcnkgPC0gR0RDcXVlcnkocHJvamVjdCA9IFwiVENHQS1LSVJDXCIsXG4jICAgICAgICAgICAgICAgICAgICAgICBkYXRhLmNhdGVnb3J5ID0gXCJETkEgTWV0aHlsYXRpb25cIixcbiMgICAgICAgICAgICAgICAgICAgICAgIGRhdGEudHlwZSA9IFwiTWV0aHlsYXRpb24gQmV0YSBWYWx1ZVwiLFxuIyAgICAgICAgICAgICAgICAgICAgICAgcGxhdGZvcm0gPSBcIklsbHVtaW5hIEh1bWFuIE1ldGh5bGF0aW9uIDQ1MFwiKVxuI0dEQ2Rvd25sb2FkKG1ldGhfcXVlcnkpXG4jbWV0aF9zZSA8LSBHRENwcmVwYXJlKG1ldGhfcXVlcnkpXG5cbiMgRG93bmxvYWQgbWV0aHlsYXRpb24gZGF0YSAoNDUwSyBhcnJheSlcbm1ldGhfcXVlcnkgPC0gR0RDcXVlcnkocHJvamVjdCA9IFwiVENHQS1LSVJDXCIsXG4gICAgICAgICAgICAgICAgICAgICAgIGRhdGEuY2F0ZWdvcnkgPSBcIkROQSBNZXRoeWxhdGlvblwiLFxuICAgICAgICAgICAgICAgICAgICAgICBkYXRhLnR5cGUgPSBcIk1ldGh5bGF0aW9uIEJldGEgVmFsdWVcIixcbiAgICAgICAgICAgICAgICAgICAgICAgcGxhdGZvcm0gPSBcIklsbHVtaW5hIEh1bWFuIE1ldGh5bGF0aW9uIDQ1MFwiKVxuXG4jIENsZWFyIGFueSBjb3JydXB0ZWQgcHJldmlvdXMgZG93bmxvYWQgYXR0ZW1wdHNcbmlmIChkaXIuZXhpc3RzKFwiR0RDZGF0YVwiKSkge1xuICB1bmxpbmsoXCJHRENkYXRhXCIsIHJlY3Vyc2l2ZSA9IFRSVUUpXG59XG5cbiMgRG93bmxvYWQgd2l0aCBzbWFsbGVyIGNodW5rcyBhbmQgbW9yZSByZXRyaWVzXG5HRENkb3dubG9hZChtZXRoX3F1ZXJ5LCBcbiAgICAgICAgICAgIG1ldGhvZCA9IFwiYXBpXCIsXG4gICAgICAgICAgICBmaWxlcy5wZXIuY2h1bmsgPSA2KVxuXG4jIFByZXBhcmUgdGhlIGRhdGFcbm1ldGhfc2UgPC0gR0RDcHJlcGFyZShtZXRoX3F1ZXJ5KVxuYGBgIn0= -->
+<pre class="r"><code># Download methylation data (450K array)
+#meth_query &lt;- GDCquery(project = &quot;TCGA-KIRC&quot;,
+#                       data.category = &quot;DNA Methylation&quot;,
+#                       data.type = &quot;Methylation Beta Value&quot;,
+#                       platform = &quot;Illumina Human Methylation 450&quot;)
+#GDCdownload(meth_query)
+#meth_se &lt;- GDCprepare(meth_query)
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiRGF0YSBEb3dubG9hZCAoQ2xpbmljYWwgRGF0YSkiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCmBgYHtyfQppZiAoIXJlcXVpcmUoImtuaXRyIiwgcXVpZXRseSA9IFRSVUUpKQppbnN0YWxsLnBhY2thZ2VzKCJrbml0ciIpCmlmICghcmVxdWlyZSgiQmlvY01hbmFnZXIiLCBxdWlldGx5ID0gVFJVRSkpCmluc3RhbGwucGFja2FnZXMoIkJpb2NNYW5hZ2VyIikKQmlvY01hbmFnZXI6Omluc3RhbGwodmVyc2lvbiA9ICIzLjIxIikKaWYgKCFyZXF1aXJlKCJUQ0dBYmlvbGlua3MiLCBxdWlldGx5ID0gVFJVRSkpCkJpb2NNYW5hZ2VyOjppbnN0YWxsKCJUQ0dBYmlvbGlua3MiKQppZiAoIXJlcXVpcmUoIm1hZnRvb2xzIiwgcXVpZXRseSA9IFRSVUUpKQpCaW9jTWFuYWdlcjo6aW5zdGFsbCgibWFmdG9vbHMiKQpsaWJyYXJ5KEJpb2NNYW5hZ2VyKQpsaWJyYXJ5KFRDR0FiaW9saW5rcykKbGlicmFyeShtYWZ0b29scykKYGBgCgpgYGB7cn0Ka25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSBub3JtYWxpemVQYXRoKCIvaG9tZTEvc2V1bmdnZW8vNDkwX2NsdXN0ZXIvYW5hbHlzaXNfZGF0YS8iKSkKYGBgCgpgYGB7cn0KY2xpbl9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0gIlRDR0EtS0lSQyIsCmRhdGEuY2F0ZWdvcnkgPSAiQ2xpbmljYWwiLApkYXRhLnR5cGUgPSAiQ2xpbmljYWwgU3VwcGxlbWVudCIsCmRhdGEuZm9ybWF0ID0gJ0JDUiBCaW90YWInKQpHRENkb3dubG9hZChjbGluX3F1ZXJ5KQpjbGluaWNhbC5CQ1J0YWIuYWxsIDwtIEdEQ3ByZXBhcmUoY2xpbl9xdWVyeSkKY2xpbmljIDwtIGNsaW5pY2FsLkJDUnRhYi5hbGwkY2xpbmljYWxfcGF0aWVudF9raXJjWy1jKDEsMiksXQpgYGAKYGBge3J9CgpgYGAKCgoKYGBge3J9CiMgcnVuIHRoaXMgbGF0ZXIKY29sbmFtZXMoY2xpbmljKVsgY29sbmFtZXMoY2xpbmljKSA9PSAiYmNyX3BhdGllbnRfYmFyY29kZSIgXSA8LQoiVHVtb3JfU2FtcGxlX0JhcmNvZGUiCm1hZl9xdWVyeSA8LSBHRENxdWVyeSgKcHJvamVjdCA9ICJUQ0dBLUtJUkMiLApkYXRhLmNhdGVnb3J5ID0gIlNpbXBsZSBOdWNsZW90aWRlIFZhcmlhdGlvbiIsCmFjY2VzcyA9ICJvcGVuIiwKZGF0YS50eXBlID0gIk1hc2tlZCBTb21hdGljIE11dGF0aW9uIiwKd29ya2Zsb3cudHlwZSA9ICJBbGlxdW90IEVuc2VtYmxlIFNvbWF0aWMgVmFyaWFudCBNZXJnaW5nIGFuZCBNYXNraW5nIgopCkdEQ2Rvd25sb2FkKG1hZl9xdWVyeSwgbWV0aG9kID0gImFwaSIsIGZpbGVzLnBlci5jaHVuayA9IDEwMCkKbWFmIDwtIEdEQ3ByZXBhcmUobWFmX3F1ZXJ5KQptYWZfb2JqZWN0IDwtIHJlYWQubWFmKG1hZiA9IG1hZiwKY2xpbmljYWxEYXRhID0gY2xpbmljLAppc1RDR0EgPSBUUlVFKQpgYGAKCmBgYHtyfQojIHJ1biB0aGlzIGxhdGVyCnJuYV9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0iVENHQS1LSVJDIiwKZGF0YS5jYXRlZ29yeSA9ICJUcmFuc2NyaXB0b21lIFByb2ZpbGluZyIsCmRhdGEudHlwZSA9ICJHZW5lIEV4cHJlc3Npb24gUXVhbnRpZmljYXRpb24iLAp3b3JrZmxvdy50eXBlID0gIlNUQVIgLSBDb3VudHMiKQpHRENkb3dubG9hZChybmFfcXVlcnkpCnJuYV9zZSA8LSBHRENwcmVwYXJlKHJuYV9xdWVyeSkKYGBgCgo=</div>
+# Download methylation data (450K array)
+meth_query &lt;- GDCquery(project = &quot;TCGA-KIRC&quot;,
+                       data.category = &quot;DNA Methylation&quot;,
+                       data.type = &quot;Methylation Beta Value&quot;,
+                       platform = &quot;Illumina Human Methylation 450&quot;)
+
+# Clear any corrupted previous download attempts
+if (dir.exists(&quot;GDCdata&quot;)) {
+  unlink(&quot;GDCdata&quot;, recursive = TRUE)
+}
+
+# Download with smaller chunks and more retries
+GDCdownload(meth_query, 
+            method = &quot;api&quot;,
+            files.per.chunk = 6)
+
+# Prepare the data
+meth_se &lt;- GDCprepare(meth_query)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><strong>Key changes:</strong> - <code>files.per.chunk = 6</code> —
+downloads only 6 files at a time instead of 76, reducing the chance of
+corruption - Added code to clear any corrupted partial downloads before
+retrying</p>
+<p><strong>If that still fails, try this alternative
+approach:</strong></p>
+<pre class="r"><code># Use the GDC client method instead (more robust for large files)
+GDCdownload(meth_query, 
+            method = &quot;client&quot;,
+            files.per.chunk = 6)</code></pre>
+<p><strong>Or if you have very unstable internet, use an even smaller
+chunk size:</strong></p>
+<pre class="r"><code>GDCdownload(meth_query, 
+            method = &quot;api&quot;,
+            files.per.chunk = 3)</code></pre>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVaMlYwZDJRb0tWeHVZR0JnSW4wPSAtLT5cblxuYGBgclxuZ2V0d2QoKVxuYGBgXG5cbjwhLS0gcm5iLXNvdXJjZS1lbmQgLS0+XG4ifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0d2QoKVxuYGBgIn0= -->
+<pre class="r"><code>getwd()</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiL2hvbWUxL3NldW5nZ2VvLzQ5MF9jbHVzdGVyL2FuYWx5c2lzX2RhdGFcIlxuIn0= -->
+<pre><code>[1] &quot;/home1/seunggeo/490_cluster/analysis_data&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="section-12" class="section level1">
+<h1>============================================</h1>
+</div>
+<div id="check-available-clinical-variables-for-your-analysis" class="section level1">
+<h1>Check Available Clinical Variables for Your Analysis</h1>
+</div>
+<div id="section-13" class="section level1">
+<h1>============================================</h1>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG48IS0tIHJuYi1zb3VyY2UtYmVnaW4gZXlKa1lYUmhJam9pWUdCZ2NseHVJeUJEYUdWamF5Qm1iM0lnYkdGMFpYSmhiR2wwZVNCamIyeDFiVzRnS0d0bGVTQjJZWEpwWVdKc1pTQm1iM0lnZVc5MWNpQm9lWEJ2ZEdobGMybHpLVnh1YVdZb1hDSnNZWFJsY21Gc2FYUjVYQ0lnSldsdUpTQmpiMnh1WVcxbGN5aGpiR2x1YVdNcEtTQjdYRzRnSUhCeWFXNTBLRndpVEdGMFpYSmhiR2wwZVNCMllYSnBZV0pzWlNCbWIzVnVaRHBjSWlsY2JpQWdjSEpwYm5Rb2RHRmliR1VvWTJ4cGJtbGpKR3hoZEdWeVlXeHBkSGtwS1Z4dWZTQmxiSE5sSUh0Y2JpQWdjSEpwYm5Rb1hDSkJkbUZwYkdGaWJHVWdZMjlzZFcxdWN6cGNJaWxjYmlBZ2NISnBiblFvWTI5c2JtRnRaWE1vWTJ4cGJtbGpLU2xjYm4xY2JseHVJeUJEYUdWamF5Qm1iM0lnYzIxdmEybHVaeUJvYVhOMGIzSjVYRzVwWmloY0luUnZZbUZqWTI5ZmMyMXZhMmx1WjE5b2FYTjBiM0o1WENJZ0pXbHVKU0JqYjJ4dVlXMWxjeWhqYkdsdWFXTXBLU0I3WEc0Z0lIQnlhVzUwS0Z3aVUyMXZhMmx1WnlCb2FYTjBiM0o1SUdadmRXNWtPbHdpS1Z4dUlDQndjbWx1ZENoMFlXSnNaU2hqYkdsdWFXTWtkRzlpWVdOamIxOXpiVzlyYVc1blgyaHBjM1J2Y25rcEtWeHVmVnh1WEc0aklFTm9aV05ySUdadmNpQnpaWGd2WjJWdVpHVnlYRzVwWmloY0ltZGxibVJsY2x3aUlDVnBiaVVnWTI5c2JtRnRaWE1vWTJ4cGJtbGpLU2tnZTF4dUlDQndjbWx1ZENoY0lrZGxibVJsY2lCMllYSnBZV0pzWlNCbWIzVnVaRHBjSWlsY2JpQWdjSEpwYm5Rb2RHRmliR1VvWTJ4cGJtbGpKR2RsYm1SbGNpa3BYRzU5WEc1Z1lHQWlmUT09IC0tPlxuXG5gYGByXG4jIENoZWNrIGZvciBsYXRlcmFsaXR5IGNvbHVtbiAoa2V5IHZhcmlhYmxlIGZvciB5b3VyIGh5cG90aGVzaXMpXG5pZihcImxhdGVyYWxpdHlcIiAlaW4lIGNvbG5hbWVzKGNsaW5pYykpIHtcbiAgcHJpbnQoXCJMYXRlcmFsaXR5IHZhcmlhYmxlIGZvdW5kOlwiKVxuICBwcmludCh0YWJsZShjbGluaWMkbGF0ZXJhbGl0eSkpXG59IGVsc2Uge1xuICBwcmludChcIkF2YWlsYWJsZSBjb2x1bW5zOlwiKVxuICBwcmludChjb2xuYW1lcyhjbGluaWMpKVxufVxuXG4jIENoZWNrIGZvciBzbW9raW5nIGhpc3RvcnlcbmlmKFwidG9iYWNjb19zbW9raW5nX2hpc3RvcnlcIiAlaW4lIGNvbG5hbWVzKGNsaW5pYykpIHtcbiAgcHJpbnQoXCJTbW9raW5nIGhpc3RvcnkgZm91bmQ6XCIpXG4gIHByaW50KHRhYmxlKGNsaW5pYyR0b2JhY2NvX3Ntb2tpbmdfaGlzdG9yeSkpXG59XG5cbiMgQ2hlY2sgZm9yIHNleC9nZW5kZXJcbmlmKFwiZ2VuZGVyXCIgJWluJSBjb2xuYW1lcyhjbGluaWMpKSB7XG4gIHByaW50KFwiR2VuZGVyIHZhcmlhYmxlIGZvdW5kOlwiKVxuICBwcmludCh0YWJsZShjbGluaWMkZ2VuZGVyKSlcbn1cbmBgYFxuXG48IS0tIHJuYi1zb3VyY2UtZW5kIC0tPlxuIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDaGVjayBmb3IgbGF0ZXJhbGl0eSBjb2x1bW4gKGtleSB2YXJpYWJsZSBmb3IgeW91ciBoeXBvdGhlc2lzKVxuaWYoXCJsYXRlcmFsaXR5XCIgJWluJSBjb2xuYW1lcyhjbGluaWMpKSB7XG4gIHByaW50KFwiTGF0ZXJhbGl0eSB2YXJpYWJsZSBmb3VuZDpcIilcbiAgcHJpbnQodGFibGUoY2xpbmljJGxhdGVyYWxpdHkpKVxufSBlbHNlIHtcbiAgcHJpbnQoXCJBdmFpbGFibGUgY29sdW1uczpcIilcbiAgcHJpbnQoY29sbmFtZXMoY2xpbmljKSlcbn1cblxuIyBDaGVjayBmb3Igc21va2luZyBoaXN0b3J5XG5pZihcInRvYmFjY29fc21va2luZ19oaXN0b3J5XCIgJWluJSBjb2xuYW1lcyhjbGluaWMpKSB7XG4gIHByaW50KFwiU21va2luZyBoaXN0b3J5IGZvdW5kOlwiKVxuICBwcmludCh0YWJsZShjbGluaWMkdG9iYWNjb19zbW9raW5nX2hpc3RvcnkpKVxufVxuXG4jIENoZWNrIGZvciBzZXgvZ2VuZGVyXG5pZihcImdlbmRlclwiICVpbiUgY29sbmFtZXMoY2xpbmljKSkge1xuICBwcmludChcIkdlbmRlciB2YXJpYWJsZSBmb3VuZDpcIilcbiAgcHJpbnQodGFibGUoY2xpbmljJGdlbmRlcikpXG59XG5gYGAifQ== -->
+<pre class="r"><code># Check for laterality column (key variable for your hypothesis)
+if(&quot;laterality&quot; %in% colnames(clinic)) {
+  print(&quot;Laterality variable found:&quot;)
+  print(table(clinic$laterality))
+} else {
+  print(&quot;Available columns:&quot;)
+  print(colnames(clinic))
+}
+
+# Check for smoking history
+if(&quot;tobacco_smoking_history&quot; %in% colnames(clinic)) {
+  print(&quot;Smoking history found:&quot;)
+  print(table(clinic$tobacco_smoking_history))
+}
+
+# Check for sex/gender
+if(&quot;gender&quot; %in% colnames(clinic)) {
+  print(&quot;Gender variable found:&quot;)
+  print(table(clinic$gender))
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<pre><code>
+## Key Points for Your GitHub Submission
+
+1. **Repository name**: Should be `qbio490_fa25_final_KIRC`
+
+2. **Folder structure**:</code></pre>
+<p>qbio490_fa25_final_KIRC/ ├── outputs/ # All figures and results go
+here ├── data_download.Rmd # This file ├── analysis.Rmd # Your main
+analysis code └── README.md # Brief description</p>
+<!-- rnb-text-end -->
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiVENHQS1LSVJDIERhdGEgRG93bmxvYWQiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCiMgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KIyBQYWNrYWdlIEluc3RhbGxhdGlvbiBhbmQgTG9hZGluZwojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CmBgYHtyIHNldHVwfQppZiAoIXJlcXVpcmUoIkJpb2NNYW5hZ2VyIiwgcXVpZXRseSA9IFRSVUUpKQogIGluc3RhbGwucGFja2FnZXMoIkJpb2NNYW5hZ2VyIikKCiMgU2tpcCB2ZXJzaW9uIHZhbGlkYXRpb24gaWYgbm8gaW50ZXJuZXQKb3B0aW9ucyhCaW9jTWFuYWdlci5jaGVja19yZXBvc2l0b3JpZXMgPSBGQUxTRSkKCiMgSW5zdGFsbCB3aXRob3V0IHZlcnNpb24gc3BlY2lmaWNhdGlvbgppZiAoIXJlcXVpcmUoIlRDR0FiaW9saW5rcyIsIHF1aWV0bHkgPSBUUlVFKSkKICBCaW9jTWFuYWdlcjo6aW5zdGFsbCgiVENHQWJpb2xpbmtzIiwgYXNrID0gRkFMU0UsIHVwZGF0ZSA9IEZBTFNFKQppZiAoIXJlcXVpcmUoIm1hZnRvb2xzIiwgcXVpZXRseSA9IFRSVUUpKQogIEJpb2NNYW5hZ2VyOjppbnN0YWxsKCJtYWZ0b29scyIsIGFzayA9IEZBTFNFLCB1cGRhdGUgPSBGQUxTRSkKaWYgKCFyZXF1aXJlKCJTdW1tYXJpemVkRXhwZXJpbWVudCIsIHF1aWV0bHkgPSBUUlVFKSkKICBCaW9jTWFuYWdlcjo6aW5zdGFsbCgiU3VtbWFyaXplZEV4cGVyaW1lbnQiLCBhc2sgPSBGQUxTRSwgdXBkYXRlID0gRkFMU0UpCgpsaWJyYXJ5KEJpb2NNYW5hZ2VyKQpsaWJyYXJ5KFRDR0FiaW9saW5rcykKbGlicmFyeShtYWZ0b29scykKbGlicmFyeShTdW1tYXJpemVkRXhwZXJpbWVudCkKYGBgCgojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiMgU2V0IFdvcmtpbmcgRGlyZWN0b3J5IGFuZCBDcmVhdGUgT3V0cHV0IEZvbGRlcgojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CmBgYHtyIGRpcmVjdG9yaWVzfQojIFNldCB5b3VyIHJvb3QgZGlyZWN0b3J5CmtuaXRyOjpvcHRzX2tuaXQkc2V0KHJvb3QuZGlyID0gbm9ybWFsaXplUGF0aCgiL2hvbWUxL3NldW5nZ2VvLzQ5MF9jbHVzdGVyL2FuYWx5c2lzX2RhdGEvIikpCgojIENyZWF0ZSBvdXRwdXRzIGZvbGRlciBmb3Igc2F2aW5nIGZpZ3VyZXMgYW5kIHJlc3VsdHMgKHJlcXVpcmVkIGJ5IHByb2plY3QgZ3VpZGVsaW5lcykKZGlyLmNyZWF0ZSgiL2hvbWUxL3NldW5nZ2VvLzQ5MF9jbHVzdGVyL3FiaW80OTBfZmEyNV9maW5hbF9LSVJDL291dHB1dHMiLCAKICAgICAgICAgICBzaG93V2FybmluZ3MgPSBGQUxTRSwgcmVjdXJzaXZlID0gVFJVRSkKYGBgCgojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiMgQ2xpbmljYWwgRGF0YSBEb3dubG9hZAojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CmBgYHtyIGNsaW5pY2FsX2RhdGF9CiMgRG93bmxvYWQgY2xpbmljYWwgc3VwcGxlbWVudCBkYXRhIChpbmNsdWRlcyBkZXRhaWxlZCBwYXRpZW50IGluZm9ybWF0aW9uKQpjbGluX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KHByb2plY3QgPSAiVENHQS1LSVJDIiwKICAgICAgICAgICAgICAgICAgICAgICBkYXRhLmNhdGVnb3J5ID0gIkNsaW5pY2FsIiwKICAgICAgICAgICAgICAgICAgICAgICBkYXRhLnR5cGUgPSAiQ2xpbmljYWwgU3VwcGxlbWVudCIsCiAgICAgICAgICAgICAgICAgICAgICAgZGF0YS5mb3JtYXQgPSAnQkNSIEJpb3RhYicpCkdEQ2Rvd25sb2FkKGNsaW5fcXVlcnkpCmNsaW5pY2FsLkJDUnRhYi5hbGwgPC0gR0RDcHJlcGFyZShjbGluX3F1ZXJ5KQoKIyBFeHRyYWN0IHBhdGllbnQgY2xpbmljYWwgZGF0YSAocmVtb3ZlIGhlYWRlciByb3dzKQpjbGluaWMgPC0gY2xpbmljYWwuQkNSdGFiLmFsbCRjbGluaWNhbF9wYXRpZW50X2tpcmNbLWMoMSwyKSxdCgojIEV4dHJhY3QgZHJ1ZyBkYXRhIChmb3IgdHJlYXRtZW50IGFuYWx5c2lzIC0gaGlnaGx5IGVuY291cmFnZWQpCmNsaW5pY19kcnVnIDwtIGNsaW5pY2FsLkJDUnRhYi5hbGwkY2xpbmljYWxfZHJ1Z19raXJjWy1jKDEsMiksXQoKIyBFeHRyYWN0IHJhZGlhdGlvbiBkYXRhIChmb3IgdHJlYXRtZW50IGFuYWx5c2lzIC0gaGlnaGx5IGVuY291cmFnZWQpCmNsaW5pY19yYWQgPC0gY2xpbmljYWwuQkNSdGFiLmFsbCRjbGluaWNhbF9yYWRpYXRpb25fa2lyY1stYygxLDIpLF0KCiMgUmVuYW1lIGJhcmNvZGUgY29sdW1uIGZvciBjb21wYXRpYmlsaXR5IHdpdGggbWFmdG9vbHMKY29sbmFtZXMoY2xpbmljKVtjb2xuYW1lcyhjbGluaWMpID09ICJiY3JfcGF0aWVudF9iYXJjb2RlIl0gPC0gIlR1bW9yX1NhbXBsZV9CYXJjb2RlIgpgYGAKCiMgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KIyBNQUYgKE11dGF0aW9uKSBEYXRhIERvd25sb2FkCiMgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KYGBge3IgbWFmX2RhdGF9Cm1hZl9xdWVyeSA8LSBHRENxdWVyeSgKICBwcm9qZWN0ID0gIlRDR0EtS0lSQyIsCiAgZGF0YS5jYXRlZ29yeSA9ICJTaW1wbGUgTnVjbGVvdGlkZSBWYXJpYXRpb24iLAogIGFjY2VzcyA9ICJvcGVuIiwKICBkYXRhLnR5cGUgPSAiTWFza2VkIFNvbWF0aWMgTXV0YXRpb24iLAogIHdvcmtmbG93LnR5cGUgPSAiQWxpcXVvdCBFbnNlbWJsZSBTb21hdGljIFZhcmlhbnQgTWVyZ2luZyBhbmQgTWFza2luZyIKKQpHRENkb3dubG9hZChtYWZfcXVlcnksIG1ldGhvZCA9ICJhcGkiLCBmaWxlcy5wZXIuY2h1bmsgPSAxMDApCm1hZiA8LSBHRENwcmVwYXJlKG1hZl9xdWVyeSkKCiMgQ3JlYXRlIG1hZiBvYmplY3Qgd2l0aCBjbGluaWNhbCBhbm5vdGF0aW9ucwptYWZfb2JqZWN0IDwtIHJlYWQubWFmKG1hZiA9IG1hZiwKICAgICAgICAgICAgICAgICAgICAgICBjbGluaWNhbERhdGEgPSBjbGluaWMsCiAgICAgICAgICAgICAgICAgICAgICAgaXNUQ0dBID0gVFJVRSkKYGBgCgojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiMgUk5BLXNlcSBEYXRhIERvd25sb2FkCiMgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KYGBge3Igcm5hc2VxX2RhdGF9CnJuYV9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0gIlRDR0EtS0lSQyIsCiAgICAgICAgICAgICAgICAgICAgICBkYXRhLmNhdGVnb3J5ID0gIlRyYW5zY3JpcHRvbWUgUHJvZmlsaW5nIiwKICAgICAgICAgICAgICAgICAgICAgIGRhdGEudHlwZSA9ICJHZW5lIEV4cHJlc3Npb24gUXVhbnRpZmljYXRpb24iLAogICAgICAgICAgICAgICAgICAgICAgd29ya2Zsb3cudHlwZSA9ICJTVEFSIC0gQ291bnRzIikKR0RDZG93bmxvYWQocm5hX3F1ZXJ5KQpybmFfc2UgPC0gR0RDcHJlcGFyZShybmFfcXVlcnkpCmBgYAoKIyA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQojIE1ldGh5bGF0aW9uIERhdGEgRG93bmxvYWQgKFJFUVVJUkVEIC0gY3VycmVudGx5IG1pc3NpbmcpCiMgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KYGBge3IgbWV0aHlsYXRpb25fZGF0YX0KIyBEb3dubG9hZCBtZXRoeWxhdGlvbiBkYXRhICg0NTBLIGFycmF5KQojbWV0aF9xdWVyeSA8LSBHRENxdWVyeShwcm9qZWN0ID0gIlRDR0EtS0lSQyIsCiMgICAgICAgICAgICAgICAgICAgICAgIGRhdGEuY2F0ZWdvcnkgPSAiRE5BIE1ldGh5bGF0aW9uIiwKIyAgICAgICAgICAgICAgICAgICAgICAgZGF0YS50eXBlID0gIk1ldGh5bGF0aW9uIEJldGEgVmFsdWUiLAojICAgICAgICAgICAgICAgICAgICAgICBwbGF0Zm9ybSA9ICJJbGx1bWluYSBIdW1hbiBNZXRoeWxhdGlvbiA0NTAiKQojR0RDZG93bmxvYWQobWV0aF9xdWVyeSkKI21ldGhfc2UgPC0gR0RDcHJlcGFyZShtZXRoX3F1ZXJ5KQoKIyBEb3dubG9hZCBtZXRoeWxhdGlvbiBkYXRhICg0NTBLIGFycmF5KQptZXRoX3F1ZXJ5IDwtIEdEQ3F1ZXJ5KHByb2plY3QgPSAiVENHQS1LSVJDIiwKICAgICAgICAgICAgICAgICAgICAgICBkYXRhLmNhdGVnb3J5ID0gIkROQSBNZXRoeWxhdGlvbiIsCiAgICAgICAgICAgICAgICAgICAgICAgZGF0YS50eXBlID0gIk1ldGh5bGF0aW9uIEJldGEgVmFsdWUiLAogICAgICAgICAgICAgICAgICAgICAgIHBsYXRmb3JtID0gIklsbHVtaW5hIEh1bWFuIE1ldGh5bGF0aW9uIDQ1MCIpCgojIENsZWFyIGFueSBjb3JydXB0ZWQgcHJldmlvdXMgZG93bmxvYWQgYXR0ZW1wdHMKaWYgKGRpci5leGlzdHMoIkdEQ2RhdGEiKSkgewogIHVubGluaygiR0RDZGF0YSIsIHJlY3Vyc2l2ZSA9IFRSVUUpCn0KCiMgRG93bmxvYWQgd2l0aCBzbWFsbGVyIGNodW5rcyBhbmQgbW9yZSByZXRyaWVzCkdEQ2Rvd25sb2FkKG1ldGhfcXVlcnksIAogICAgICAgICAgICBtZXRob2QgPSAiYXBpIiwKICAgICAgICAgICAgZmlsZXMucGVyLmNodW5rID0gNikKCiMgUHJlcGFyZSB0aGUgZGF0YQptZXRoX3NlIDwtIEdEQ3ByZXBhcmUobWV0aF9xdWVyeSkKYGBgCgoqKktleSBjaGFuZ2VzOioqCi0gYGZpbGVzLnBlci5jaHVuayA9IDZgIOKAlCBkb3dubG9hZHMgb25seSA2IGZpbGVzIGF0IGEgdGltZSBpbnN0ZWFkIG9mIDc2LCByZWR1Y2luZyB0aGUgY2hhbmNlIG9mIGNvcnJ1cHRpb24KLSBBZGRlZCBjb2RlIHRvIGNsZWFyIGFueSBjb3JydXB0ZWQgcGFydGlhbCBkb3dubG9hZHMgYmVmb3JlIHJldHJ5aW5nCgoqKklmIHRoYXQgc3RpbGwgZmFpbHMsIHRyeSB0aGlzIGFsdGVybmF0aXZlIGFwcHJvYWNoOioqCmBgYHIKIyBVc2UgdGhlIEdEQyBjbGllbnQgbWV0aG9kIGluc3RlYWQgKG1vcmUgcm9idXN0IGZvciBsYXJnZSBmaWxlcykKR0RDZG93bmxvYWQobWV0aF9xdWVyeSwgCiAgICAgICAgICAgIG1ldGhvZCA9ICJjbGllbnQiLAogICAgICAgICAgICBmaWxlcy5wZXIuY2h1bmsgPSA2KQpgYGAKCioqT3IgaWYgeW91IGhhdmUgdmVyeSB1bnN0YWJsZSBpbnRlcm5ldCwgdXNlIGFuIGV2ZW4gc21hbGxlciBjaHVuayBzaXplOioqCmBgYHIKR0RDZG93bmxvYWQobWV0aF9xdWVyeSwgCiAgICAgICAgICAgIG1ldGhvZCA9ICJhcGkiLAogICAgICAgICAgICBmaWxlcy5wZXIuY2h1bmsgPSAzKQpgYGAKCmBgYHtyfQpnZXR3ZCgpCmBgYAoKCgojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiMgQ2hlY2sgQXZhaWxhYmxlIENsaW5pY2FsIFZhcmlhYmxlcyBmb3IgWW91ciBBbmFseXNpcwojID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CmBgYHtyIGNoZWNrX3ZhcmlhYmxlc30KIyBDaGVjayBmb3IgbGF0ZXJhbGl0eSBjb2x1bW4gKGtleSB2YXJpYWJsZSBmb3IgeW91ciBoeXBvdGhlc2lzKQppZigibGF0ZXJhbGl0eSIgJWluJSBjb2xuYW1lcyhjbGluaWMpKSB7CiAgcHJpbnQoIkxhdGVyYWxpdHkgdmFyaWFibGUgZm91bmQ6IikKICBwcmludCh0YWJsZShjbGluaWMkbGF0ZXJhbGl0eSkpCn0gZWxzZSB7CiAgcHJpbnQoIkF2YWlsYWJsZSBjb2x1bW5zOiIpCiAgcHJpbnQoY29sbmFtZXMoY2xpbmljKSkKfQoKIyBDaGVjayBmb3Igc21va2luZyBoaXN0b3J5CmlmKCJ0b2JhY2NvX3Ntb2tpbmdfaGlzdG9yeSIgJWluJSBjb2xuYW1lcyhjbGluaWMpKSB7CiAgcHJpbnQoIlNtb2tpbmcgaGlzdG9yeSBmb3VuZDoiKQogIHByaW50KHRhYmxlKGNsaW5pYyR0b2JhY2NvX3Ntb2tpbmdfaGlzdG9yeSkpCn0KCiMgQ2hlY2sgZm9yIHNleC9nZW5kZXIKaWYoImdlbmRlciIgJWluJSBjb2xuYW1lcyhjbGluaWMpKSB7CiAgcHJpbnQoIkdlbmRlciB2YXJpYWJsZSBmb3VuZDoiKQogIHByaW50KHRhYmxlKGNsaW5pYyRnZW5kZXIpKQp9CmBgYApgYGAKCiMjIEtleSBQb2ludHMgZm9yIFlvdXIgR2l0SHViIFN1Ym1pc3Npb24KCjEuICoqUmVwb3NpdG9yeSBuYW1lKio6IFNob3VsZCBiZSBgcWJpbzQ5MF9mYTI1X2ZpbmFsX0tJUkNgCgoyLiAqKkZvbGRlciBzdHJ1Y3R1cmUqKjoKYGBgCiAgIHFiaW80OTBfZmEyNV9maW5hbF9LSVJDLwogICDilJzilIDilIAgb3V0cHV0cy8gICAgICAgICAgICMgQWxsIGZpZ3VyZXMgYW5kIHJlc3VsdHMgZ28gaGVyZQogICDilJzilIDilIAgZGF0YV9kb3dubG9hZC5SbWQgICMgVGhpcyBmaWxlCiAgIOKUnOKUgOKUgCBhbmFseXNpcy5SbWQgICAgICAgIyBZb3VyIG1haW4gYW5hbHlzaXMgY29kZQogICDilJTilIDilIAgUkVBRE1FLm1kICAgICAgICAgICMgQnJpZWYgZGVzY3JpcHRpb24K</div>
 
 
 

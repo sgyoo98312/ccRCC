@@ -1,67 +1,193 @@
 ---
-title: "Data Download (Clinical Data)"
+title: "TCGA-KIRC Data Download"
 output: html_notebook
 ---
 
-```{r}
-if (!require("knitr", quietly = TRUE))
-install.packages("knitr")
+# ============================================
+# Package Installation and Loading
+# ============================================
+```{r setup}
 if (!require("BiocManager", quietly = TRUE))
-install.packages("BiocManager")
-BiocManager::install(version = "3.21")
+  install.packages("BiocManager")
+
+# Skip version validation if no internet
+options(BiocManager.check_repositories = FALSE)
+
+# Install without version specification
 if (!require("TCGAbiolinks", quietly = TRUE))
-BiocManager::install("TCGAbiolinks")
+  BiocManager::install("TCGAbiolinks", ask = FALSE, update = FALSE)
 if (!require("maftools", quietly = TRUE))
-BiocManager::install("maftools")
+  BiocManager::install("maftools", ask = FALSE, update = FALSE)
+if (!require("SummarizedExperiment", quietly = TRUE))
+  BiocManager::install("SummarizedExperiment", ask = FALSE, update = FALSE)
+
 library(BiocManager)
 library(TCGAbiolinks)
 library(maftools)
+library(SummarizedExperiment)
 ```
 
-```{r}
+# ============================================
+# Set Working Directory and Create Output Folder
+# ============================================
+```{r directories}
+# Set your root directory
 knitr::opts_knit$set(root.dir = normalizePath("/home1/seunggeo/490_cluster/analysis_data/"))
+
+# Create outputs folder for saving figures and results (required by project guidelines)
+dir.create("/home1/seunggeo/490_cluster/qbio490_fa25_final_KIRC/outputs", 
+           showWarnings = FALSE, recursive = TRUE)
 ```
 
-```{r}
+# ============================================
+# Clinical Data Download
+# ============================================
+```{r clinical_data}
+# Download clinical supplement data (includes detailed patient information)
 clin_query <- GDCquery(project = "TCGA-KIRC",
-data.category = "Clinical",
-data.type = "Clinical Supplement",
-data.format = 'BCR Biotab')
+                       data.category = "Clinical",
+                       data.type = "Clinical Supplement",
+                       data.format = 'BCR Biotab')
 GDCdownload(clin_query)
 clinical.BCRtab.all <- GDCprepare(clin_query)
+
+# Extract patient clinical data (remove header rows)
 clinic <- clinical.BCRtab.all$clinical_patient_kirc[-c(1,2),]
+
+# Extract drug data (for treatment analysis - highly encouraged)
+clinic_drug <- clinical.BCRtab.all$clinical_drug_kirc[-c(1,2),]
+
+# Extract radiation data (for treatment analysis - highly encouraged)
+clinic_rad <- clinical.BCRtab.all$clinical_radiation_kirc[-c(1,2),]
+
+# Rename barcode column for compatibility with maftools
+colnames(clinic)[colnames(clinic) == "bcr_patient_barcode"] <- "Tumor_Sample_Barcode"
 ```
-```{r}
 
-```
-
-
-
-```{r}
-# run this later
-colnames(clinic)[ colnames(clinic) == "bcr_patient_barcode" ] <-
-"Tumor_Sample_Barcode"
+# ============================================
+# MAF (Mutation) Data Download
+# ============================================
+```{r maf_data}
 maf_query <- GDCquery(
-project = "TCGA-KIRC",
-data.category = "Simple Nucleotide Variation",
-access = "open",
-data.type = "Masked Somatic Mutation",
-workflow.type = "Aliquot Ensemble Somatic Variant Merging and Masking"
+  project = "TCGA-KIRC",
+  data.category = "Simple Nucleotide Variation",
+  access = "open",
+  data.type = "Masked Somatic Mutation",
+  workflow.type = "Aliquot Ensemble Somatic Variant Merging and Masking"
 )
 GDCdownload(maf_query, method = "api", files.per.chunk = 100)
 maf <- GDCprepare(maf_query)
+
+# Create maf object with clinical annotations
 maf_object <- read.maf(maf = maf,
-clinicalData = clinic,
-isTCGA = TRUE)
+                       clinicalData = clinic,
+                       isTCGA = TRUE)
 ```
 
-```{r}
-# run this later
-rna_query <- GDCquery(project ="TCGA-KIRC",
-data.category = "Transcriptome Profiling",
-data.type = "Gene Expression Quantification",
-workflow.type = "STAR - Counts")
+# ============================================
+# RNA-seq Data Download
+# ============================================
+```{r rnaseq_data}
+rna_query <- GDCquery(project = "TCGA-KIRC",
+                      data.category = "Transcriptome Profiling",
+                      data.type = "Gene Expression Quantification",
+                      workflow.type = "STAR - Counts")
 GDCdownload(rna_query)
 rna_se <- GDCprepare(rna_query)
 ```
 
+# ============================================
+# Methylation Data Download (REQUIRED - currently missing)
+# ============================================
+```{r methylation_data}
+# Download methylation data (450K array)
+#meth_query <- GDCquery(project = "TCGA-KIRC",
+#                       data.category = "DNA Methylation",
+#                       data.type = "Methylation Beta Value",
+#                       platform = "Illumina Human Methylation 450")
+#GDCdownload(meth_query)
+#meth_se <- GDCprepare(meth_query)
+
+# Download methylation data (450K array)
+meth_query <- GDCquery(project = "TCGA-KIRC",
+                       data.category = "DNA Methylation",
+                       data.type = "Methylation Beta Value",
+                       platform = "Illumina Human Methylation 450")
+
+# Clear any corrupted previous download attempts
+if (dir.exists("GDCdata")) {
+  unlink("GDCdata", recursive = TRUE)
+}
+
+# Download with smaller chunks and more retries
+GDCdownload(meth_query, 
+            method = "api",
+            files.per.chunk = 6)
+
+# Prepare the data
+meth_se <- GDCprepare(meth_query)
+```
+
+**Key changes:**
+- `files.per.chunk = 6` — downloads only 6 files at a time instead of 76, reducing the chance of corruption
+- Added code to clear any corrupted partial downloads before retrying
+
+**If that still fails, try this alternative approach:**
+```r
+# Use the GDC client method instead (more robust for large files)
+GDCdownload(meth_query, 
+            method = "client",
+            files.per.chunk = 6)
+```
+
+**Or if you have very unstable internet, use an even smaller chunk size:**
+```r
+GDCdownload(meth_query, 
+            method = "api",
+            files.per.chunk = 3)
+```
+
+```{r}
+getwd()
+```
+
+
+
+# ============================================
+# Check Available Clinical Variables for Your Analysis
+# ============================================
+```{r check_variables}
+# Check for laterality column (key variable for your hypothesis)
+if("laterality" %in% colnames(clinic)) {
+  print("Laterality variable found:")
+  print(table(clinic$laterality))
+} else {
+  print("Available columns:")
+  print(colnames(clinic))
+}
+
+# Check for smoking history
+if("tobacco_smoking_history" %in% colnames(clinic)) {
+  print("Smoking history found:")
+  print(table(clinic$tobacco_smoking_history))
+}
+
+# Check for sex/gender
+if("gender" %in% colnames(clinic)) {
+  print("Gender variable found:")
+  print(table(clinic$gender))
+}
+```
+```
+
+## Key Points for Your GitHub Submission
+
+1. **Repository name**: Should be `qbio490_fa25_final_KIRC`
+
+2. **Folder structure**:
+```
+   qbio490_fa25_final_KIRC/
+   ├── outputs/           # All figures and results go here
+   ├── data_download.Rmd  # This file
+   ├── analysis.Rmd       # Your main analysis code
+   └── README.md          # Brief description
