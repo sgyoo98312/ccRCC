@@ -1,0 +1,230 @@
+---
+title: "Clinical"
+output: html_document
+---
+
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+if (!require("knitr", quietly = TRUE))
+install.packages("knitr")
+if (!require("BiocManager", quietly = TRUE))
+install.packages("BiocManager")
+BiocManager::install(version = "3.21")
+if (!require("TCGAbiolinks", quietly = TRUE))
+BiocManager::install("TCGAbiolinks")
+if (!require("maftools", quietly = TRUE))
+BiocManager::install("maftools")
+library(BiocManager)
+library(TCGAbiolinks)
+library(maftools)
+```
+
+```{r}
+knitr::opts_knit$set(root.dir = normalizePath("/home1/sskatta/490_cluster/analysis_data"))
+```
+
+```{r}
+clin_query <- GDCquery(project = "TCGA-KIRC", data.category = "Clinical", data.type = "Clinical Supplement", data.format = 'BCR Biotab')
+GDCdownload(clin_query)
+clinical.BCRtab.all <- GDCprepare(clin_query)
+clinic <- clinical.BCRtab.all$clinical_patient_kirc[-c(1,2),]
+```
+
+```{r}
+clinic
+```
+
+```{r}
+library(survival)
+library(survminer)
+library(ggplot2)
+```
+
+
+```{r}
+laterality_NA_mask <- !is.na(clinic$laterality)
+cleaned_clinic <- clinic[laterality_NA_mask,]
+
+cleaned_clinic$laterality_category <- ifelse(cleaned_clinic$laterality == "Left", "Left", ifelse(cleaned_clinic$laterality == "Right", "Right", NA))
+
+cleaned_clinic$survival_time <- ifelse(
+  cleaned_clinic$death_days_to != "[Not Applicable]",
+  cleaned_clinic$death_days_to,
+  cleaned_clinic$last_contact_days_to
+)
+
+cleaned_clinic$survival_time <- as.numeric(cleaned_clinic$survival_time)
+cleaned_clinic$death_event <- ifelse(cleaned_clinic$vital_status == "Dead", T, F)
+
+survival_object <- Surv(time = cleaned_clinic$survival_time,
+                        event = cleaned_clinic$death_event)
+
+fit_object <- survfit(survival_object ~ laterality_category, data = cleaned_clinic)
+```
+
+```{r}
+survplot <- ggsurvplot(fit_object,
+                       pval=TRUE,
+                       ggtheme = theme(plot.margin = unit(c(1,1,1,1), "cm")),
+                       legend = 'right')
+
+KM_plot <- survplot$plot + theme_bw() + theme(axis.title = element_text(size=20), 
+                                              axis.text = element_text(size=16),
+                                              legend.title = element_text(size=14),
+                                              legend.text = element_text(size=12))
+
+KM_plot
+```
+
+```{r}
+library(dplyr)
+
+# Make sure gender is a factor
+cleaned_clinic$gender <- as.factor(cleaned_clinic$gender)
+
+# --- LEFT laterality subset ---
+left_subset <- cleaned_clinic %>%
+  filter(laterality_category == "Left",
+         !is.na(gender),
+         survival_time > 0)
+
+left_surv_obj <- Surv(time = left_subset$survival_time,
+                      event = left_subset$death_event)
+
+left_fit <- survfit(left_surv_obj ~ gender, data = left_subset)
+
+left_plot_obj <- ggsurvplot(left_fit,
+                            pval = TRUE,
+                            title = "KM Plot: Left Laterality (Male vs Female)",
+                            legend.title = "Gender",
+                            legend.labs = c("Female", "Male"),
+                            ggtheme = theme_bw())
+
+left_plot <- left_plot_obj$plot +
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+left_plot
+
+```
+
+```{r}
+right_subset <- cleaned_clinic %>%
+  filter(laterality_category == "Right",
+         !is.na(gender),
+         survival_time > 0)
+
+right_surv_obj <- Surv(time = right_subset$survival_time,
+                       event = right_subset$death_event)
+
+right_fit <- survfit(right_surv_obj ~ gender, data = right_subset)
+
+right_plot_obj <- ggsurvplot(right_fit,
+                             pval = TRUE,
+                             title = "KM Plot: Right Laterality (Male vs Female)",
+                             legend.title = "Gender",
+                             legend.labs = c("Female", "Male"),
+                             ggtheme = theme_bw())
+
+right_plot <- right_plot_obj$plot +
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+right_plot
+```
+
+```{r}
+cleaned_clinic$smoking_status <- ifelse(
+  cleaned_clinic$tobacco_smoking_history_indicator == "[Not Applicable]",
+  "NonSmoker",
+  "Smoker"
+)
+
+cleaned_clinic$smoking_status <- as.factor(cleaned_clinic$smoking_status)
+
+
+cleaned_clinic$smoking_status <- as.factor(cleaned_clinic$smoking_status)
+
+smokers_subset <- cleaned_clinic %>%
+  filter(smoking_status == "Smoker",
+         !is.na(laterality_category),
+         survival_time > 0)
+
+smokers_surv_obj <- Surv(time = smokers_subset$survival_time,
+                         event = smokers_subset$death_event)
+
+smokers_fit <- survfit(smokers_surv_obj ~ laterality_category,
+                       data = smokers_subset)
+
+smokers_plot_obj <- ggsurvplot(
+  smokers_fit,
+  pval = TRUE,
+  title = "KM Plot: Smokers (Left vs Right Laterality)",
+  legend.title = "Laterality",
+  legend.labs = c("Left", "Right"),
+  ggtheme = theme_bw()
+)
+
+smokers_plot <- smokers_plot_obj$plot +
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+smokers_plot
+
+```
+
+```{r}
+cleaned_clinic$smoking_status <- ifelse(
+  grepl("^[0-9]+$", cleaned_clinic$tobacco_smoking_history_indicator),
+  "Smoker",
+  "NonSmoker"
+)
+
+
+nonsmokers_subset <- cleaned_clinic %>%
+  filter(smoking_status == "NonSmoker",
+         !is.na(laterality_category),
+         survival_time > 0)
+
+nonsmokers_surv_obj <- Surv(time = nonsmokers_subset$survival_time,
+                            event = nonsmokers_subset$death_event)
+
+nonsmokers_fit <- survfit(nonsmokers_surv_obj ~ laterality_category,
+                          data = nonsmokers_subset)
+
+nonsmokers_plot_obj <- ggsurvplot(
+  nonsmokers_fit,
+  pval = TRUE,
+  title = "KM Plot: Non-Smokers (Left vs Right Laterality)",
+  legend.title = "Laterality",
+  legend.labs = c("Left", "Right"),
+  ggtheme = theme_bw()
+)
+
+nonsmokers_plot <- nonsmokers_plot_obj$plot +
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size = 16),
+        axis.text = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 12))
+
+nonsmokers_plot
+
+
+```

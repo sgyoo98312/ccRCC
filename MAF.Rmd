@@ -1,0 +1,651 @@
+---
+title: "MAF Analysis - TCGA-KIRC"
+subtitle: "Laterality, Sex, and Smoking History Analysis"
+output: html_document
+---
+
+# ============================================
+# Setup and Load Libraries
+# ============================================
+```{r setup, message=FALSE, warning=FALSE}
+if (!require("knitr", quietly = TRUE))
+  install.packages("knitr")
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+if (!require("TCGAbiolinks", quietly = TRUE))
+  BiocManager::install("TCGAbiolinks")
+if (!require("maftools", quietly = TRUE))
+  BiocManager::install("maftools")
+
+library(BiocManager)
+library(TCGAbiolinks)
+library(maftools)
+
+# Set output directory
+output_dir <- "/home1/seunggeo/490_cluster/qbio490_fa25_final_KIRC/outputs"
+dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+```
+
+# ============================================
+# IMPORTANT NOTES FOR YOUR ANALYSIS
+# ============================================
+
+**Your Hypothesis:** Tumor laterality is associated with distinct genomic features 
+that contribute to differences in overall survival. Laterality effects may differ 
+across smoking history and sex.
+
+**Key Variables to Analyze:**
+1. **Laterality** - Left vs Right kidney
+2. **Sex** - Male vs Female  
+3. **Smoking History** - Never vs Ever smokers
+
+**Why NOT to use TTN and MUC16:**
+- TTN (Titin) and MUC16 (Mucin 16) are among the largest genes in the human genome
+- They accumulate passenger mutations simply due to their size, not because they drive cancer
+- They are NOT biologically meaningful in ccRCC analysis
+- Key ccRCC driver genes are: **VHL, PBRM1, SETD2, BAP1, KDM5C, PTEN, MTOR**
+
+# ============================================
+# Step 1: Verify Clinical Variables
+# ============================================
+```{r check_variables}
+# Check what clinical variables are available
+cat("=== AVAILABLE CLINICAL VARIABLES ===\n\n")
+
+# Check laterality
+cat("1. LATERALITY:\n")
+print(table(maf_object@clinical.data$laterality, useNA = "ifany"))
+
+# Check gender
+cat("\n2. GENDER:\n")
+print(table(maf_object@clinical.data$gender, useNA = "ifany"))
+
+# Check smoking - look for tobacco-related columns
+cat("\n3. SMOKING-RELATED COLUMNS:\n")
+smoking_cols <- grep("smok|tobacco", colnames(maf_object@clinical.data), 
+                     ignore.case = TRUE, value = TRUE)
+print(smoking_cols)
+
+# If tobacco_smoking_history exists, show values
+if ("tobacco_smoking_history" %in% colnames(maf_object@clinical.data)) {
+  cat("\nTobacco smoking history values:\n")
+  print(table(maf_object@clinical.data$tobacco_smoking_history, useNA = "ifany"))
+}
+```
+
+# ============================================
+# Step 2: Clean Clinical Variables
+# ============================================
+```{r clean_variables}
+# Create cleaned versions of key variables
+
+# --- Clean Laterality ---
+maf_object@clinical.data$laterality_clean <- maf_object@clinical.data$laterality
+maf_object@clinical.data$laterality_clean[
+  maf_object@clinical.data$laterality_clean %in% c("", "[Not Available]", "[Discrepancy]")
+] <- NA
+
+cat("Laterality (cleaned):\n")
+print(table(maf_object@clinical.data$laterality_clean, useNA = "ifany"))
+
+# --- Clean Gender ---
+maf_object@clinical.data$gender_clean <- maf_object@clinical.data$gender
+maf_object@clinical.data$gender_clean[
+  maf_object@clinical.data$gender_clean %in% c("", "[Not Available]")
+] <- NA
+
+cat("\nGender (cleaned):\n")
+print(table(maf_object@clinical.data$gender_clean, useNA = "ifany"))
+
+# --- Create Smoking Status (simplified: Never vs Ever) ---
+# TCGA codes: 1=Lifelong Non-smoker, 2=Current smoker, 
+# 3=Reformed >15yr, 4=Reformed ≤15yr, 5=Current reformed
+if ("tobacco_smoking_history" %in% colnames(maf_object@clinical.data)) {
+  maf_object@clinical.data$smoking_status <- NA
+  maf_object@clinical.data$smoking_status[
+    maf_object@clinical.data$tobacco_smoking_history == "1"
+  ] <- "Never"
+  maf_object@clinical.data$smoking_status[
+    maf_object@clinical.data$tobacco_smoking_history %in% c("2", "3", "4", "5")
+  ] <- "Ever"
+  
+  cat("\nSmoking Status (Never vs Ever):\n")
+  print(table(maf_object@clinical.data$smoking_status, useNA = "ifany"))
+}
+```
+
+# ============================================
+# Step 3: Define Genes to Analyze
+# ============================================
+```{r define_genes}
+# Passenger genes to EXCLUDE (large genes with random mutations)
+passenger_genes <- c("TTN", "MUC16", "OBSCN", "CSMD3", "RYR2", "USH2A", 
+                     "DNAH5", "SYNE1", "LRP1B", "ZFHX4", "PCLO")
+
+# Known ccRCC DRIVER genes (biologically meaningful)
+ccRCC_drivers <- c("VHL", "PBRM1", "SETD2", "BAP1", "KDM5C", "PTEN", "MTOR", 
+                   "TP53", "PIK3CA", "ATM", "ARID1A", "SMARCA4")
+
+# Get gene summary and filter out passengers
+gene_summary <- getGeneSummary(maf_object)
+gene_summary_filtered <- gene_summary[!Hugo_Symbol %in% passenger_genes]
+
+# Show top mutated genes (excluding passengers)
+cat("=== TOP 20 MUTATED GENES (excluding passengers) ===\n")
+print(head(gene_summary_filtered[, .(Hugo_Symbol, MutatedSamples, AlteredSamples)], 20))
+
+# Show ccRCC driver frequencies
+cat("\n=== ccRCC DRIVER GENE FREQUENCIES ===\n")
+driver_summary <- gene_summary[Hugo_Symbol %in% ccRCC_drivers]
+print(driver_summary[order(-MutatedSamples), .(Hugo_Symbol, MutatedSamples)])
+
+# Define top genes for plots (use filtered list)
+top_genes <- head(gene_summary_filtered$Hugo_Symbol, 15)
+cat("\n=== GENES TO USE IN ANALYSIS ===\n")
+print(top_genes)
+```
+
+# ============================================
+# Step 4: LATERALITY ANALYSIS (Primary Variable)
+# ============================================
+```{r laterality_analysis}
+cat("=== LATERALITY ANALYSIS ===\n\n")
+
+# Create subsets for Left vs Right
+left_mask <- maf_object@clinical.data$laterality_clean == "Left"
+left_mask[is.na(left_mask)] <- FALSE
+left_barcode <- maf_object@clinical.data$Tumor_Sample_Barcode[left_mask]
+left_maf <- subsetMaf(maf = maf_object, tsb = left_barcode)
+
+right_mask <- maf_object@clinical.data$laterality_clean == "Right"
+right_mask[is.na(right_mask)] <- FALSE
+right_barcode <- maf_object@clinical.data$Tumor_Sample_Barcode[right_mask]
+right_maf <- subsetMaf(maf = maf_object, tsb = right_barcode)
+
+cat(paste0("Left kidney tumors: N = ", length(left_barcode), "\n"))
+cat(paste0("Right kidney tumors: N = ", length(right_barcode), "\n"))
+```
+
+```{r laterality_coOncoplot, fig.width=14, fig.height=10}
+# Co-Oncoplot: Left vs Right Kidney
+coOncoplot(
+  m1 = left_maf,
+  m2 = right_maf,
+  m1Name = paste0("Left Kidney (N=", length(left_barcode), ")"),
+  m2Name = paste0("Right Kidney (N=", length(right_barcode), ")"),
+  genes = top_genes,
+  removeNonMutated = TRUE
+)
+
+# Save the plot
+pdf(file.path(output_dir, "coOncoplot_laterality.pdf"), width = 14, height = 10)
+coOncoplot(
+  m1 = left_maf,
+  m2 = right_maf,
+  m1Name = paste0("Left Kidney (N=", length(left_barcode), ")"),
+  m2Name = paste0("Right Kidney (N=", length(right_barcode), ")"),
+  genes = top_genes,
+  removeNonMutated = TRUE
+)
+dev.off()
+cat("Saved: coOncoplot_laterality.pdf\n")
+```
+
+```{r laterality_comparison}
+# Statistical comparison of mutation frequencies
+laterality_comparison <- mafCompare(
+  m1 = left_maf, 
+  m2 = right_maf,
+  m1Name = "Left",
+  m2Name = "Right",
+  minMut = 5
+)
+
+cat("\n=== STATISTICAL COMPARISON: Left vs Right ===\n")
+print(head(laterality_comparison$results, 15))
+
+# Save results
+write.csv(laterality_comparison$results, 
+          file.path(output_dir, "laterality_mutation_comparison.csv"),
+          row.names = FALSE)
+```
+
+```{r laterality_forestplot, fig.width=10, fig.height=8}
+# Forest plot showing odds ratios
+forestPlot(mafCompareRes = laterality_comparison, 
+           pVal = 0.1,
+           geneFontSize = 0.8)
+
+pdf(file.path(output_dir, "forestplot_laterality.pdf"), width = 10, height = 8)
+forestPlot(mafCompareRes = laterality_comparison, pVal = 0.1, geneFontSize = 0.8)
+dev.off()
+cat("Saved: forestplot_laterality.pdf\n")
+```
+
+# ============================================
+# Step 5: SEX/GENDER ANALYSIS
+# ============================================
+```{r sex_analysis}
+cat("=== SEX/GENDER ANALYSIS ===\n\n")
+
+# Create subsets for Male vs Female
+male_mask <- maf_object@clinical.data$gender_clean == "MALE"
+male_mask[is.na(male_mask)] <- FALSE
+male_barcode <- maf_object@clinical.data$Tumor_Sample_Barcode[male_mask]
+male_maf <- subsetMaf(maf = maf_object, tsb = male_barcode)
+
+female_mask <- maf_object@clinical.data$gender_clean == "FEMALE"
+female_mask[is.na(female_mask)] <- FALSE
+female_barcode <- maf_object@clinical.data$Tumor_Sample_Barcode[female_mask]
+female_maf <- subsetMaf(maf = maf_object, tsb = female_barcode)
+
+cat(paste0("Male patients: N = ", length(male_barcode), "\n"))
+cat(paste0("Female patients: N = ", length(female_barcode), "\n"))
+```
+
+```{r sex_coOncoplot, fig.width=14, fig.height=10}
+# Co-Oncoplot: Male vs Female
+coOncoplot(
+  m1 = male_maf,
+  m2 = female_maf,
+  m1Name = paste0("Male (N=", length(male_barcode), ")"),
+  m2Name = paste0("Female (N=", length(female_barcode), ")"),
+  genes = top_genes,
+  removeNonMutated = TRUE
+)
+
+pdf(file.path(output_dir, "coOncoplot_sex.pdf"), width = 14, height = 10)
+coOncoplot(
+  m1 = male_maf,
+  m2 = female_maf,
+  m1Name = paste0("Male (N=", length(male_barcode), ")"),
+  m2Name = paste0("Female (N=", length(female_barcode), ")"),
+  genes = top_genes,
+  removeNonMutated = TRUE
+)
+dev.off()
+cat("Saved: coOncoplot_sex.pdf\n")
+```
+
+```{r sex_comparison}
+# Statistical comparison
+sex_comparison <- mafCompare(
+  m1 = male_maf, 
+  m2 = female_maf,
+  m1Name = "Male",
+  m2Name = "Female",
+  minMut = 5
+)
+
+cat("\n=== STATISTICAL COMPARISON: Male vs Female ===\n")
+print(head(sex_comparison$results, 15))
+
+write.csv(sex_comparison$results, 
+          file.path(output_dir, "sex_mutation_comparison.csv"),
+          row.names = FALSE)
+```
+
+```{r sex_forestplot, fig.width=10, fig.height=8}
+forestPlot(mafCompareRes = sex_comparison, pVal = 0.1, geneFontSize = 0.8)
+
+pdf(file.path(output_dir, "forestplot_sex.pdf"), width = 10, height = 8)
+forestPlot(mafCompareRes = sex_comparison, pVal = 0.1, geneFontSize = 0.8)
+dev.off()
+cat("Saved: forestplot_sex.pdf\n")
+```
+
+# ============================================
+# Step 6: SMOKING STATUS ANALYSIS
+# ============================================
+```{r smoking_analysis}
+cat("=== SMOKING STATUS ANALYSIS ===\n\n")
+
+if ("smoking_status" %in% colnames(maf_object@clinical.data)) {
+  
+  # Create subsets for Never vs Ever smokers
+  never_mask <- maf_object@clinical.data$smoking_status == "Never"
+  never_mask[is.na(never_mask)] <- FALSE
+  never_barcode <- maf_object@clinical.data$Tumor_Sample_Barcode[never_mask]
+  never_maf <- subsetMaf(maf = maf_object, tsb = never_barcode)
+  
+  ever_mask <- maf_object@clinical.data$smoking_status == "Ever"
+  ever_mask[is.na(ever_mask)] <- FALSE
+  ever_barcode <- maf_object@clinical.data$Tumor_Sample_Barcode[ever_mask]
+  ever_maf <- subsetMaf(maf = maf_object, tsb = ever_barcode)
+  
+  cat(paste0("Never smokers: N = ", length(never_barcode), "\n"))
+  cat(paste0("Ever smokers: N = ", length(ever_barcode), "\n"))
+  
+} else {
+  cat("WARNING: smoking_status column not found. Check variable names.\n")
+}
+```
+
+```{r smoking_coOncoplot, fig.width=14, fig.height=10}
+if (exists("never_maf") && exists("ever_maf") && 
+    length(never_barcode) > 10 && length(ever_barcode) > 10) {
+  
+  coOncoplot(
+    m1 = never_maf,
+    m2 = ever_maf,
+    m1Name = paste0("Never Smokers (N=", length(never_barcode), ")"),
+    m2Name = paste0("Ever Smokers (N=", length(ever_barcode), ")"),
+    genes = top_genes,
+    removeNonMutated = TRUE
+  )
+  
+  pdf(file.path(output_dir, "coOncoplot_smoking.pdf"), width = 14, height = 10)
+  coOncoplot(
+    m1 = never_maf,
+    m2 = ever_maf,
+    m1Name = paste0("Never Smokers (N=", length(never_barcode), ")"),
+    m2Name = paste0("Ever Smokers (N=", length(ever_barcode), ")"),
+    genes = top_genes,
+    removeNonMutated = TRUE
+  )
+  dev.off()
+  cat("Saved: coOncoplot_smoking.pdf\n")
+}
+```
+
+```{r smoking_comparison}
+if (exists("never_maf") && exists("ever_maf") && 
+    length(never_barcode) > 10 && length(ever_barcode) > 10) {
+  
+  smoking_comparison <- mafCompare(
+    m1 = never_maf, 
+    m2 = ever_maf,
+    m1Name = "Never",
+    m2Name = "Ever",
+    minMut = 5
+  )
+  
+  cat("\n=== STATISTICAL COMPARISON: Never vs Ever Smokers ===\n")
+  print(head(smoking_comparison$results, 15))
+  
+  write.csv(smoking_comparison$results, 
+            file.path(output_dir, "smoking_mutation_comparison.csv"),
+            row.names = FALSE)
+}
+```
+
+# ============================================
+# Step 7: Fisher's Exact Test for Key Gene (VHL)
+# ============================================
+
+**Why VHL instead of TTN?**
+- VHL (Von Hippel-Lindau) is THE key driver gene in ccRCC
+- VHL mutations occur in ~50% of ccRCC cases
+- VHL regulates HIF pathway, which controls angiogenesis
+- TTN is a passenger gene with no biological relevance to ccRCC
+
+```{r fisher_test_vhl}
+# Use VHL - the most important driver gene in ccRCC
+gene <- "VHL"
+
+cat(paste0("=== FISHER'S EXACT TEST: ", gene, " vs Laterality ===\n\n"))
+
+# Get samples with VHL mutations in each group
+mut_left <- unique(subsetMaf(left_maf, genes = gene)@data$Tumor_Sample_Barcode)
+mut_right <- unique(subsetMaf(right_maf, genes = gene)@data$Tumor_Sample_Barcode)
+
+# Total samples in each group
+n_left <- length(unique(left_maf@clinical.data$Tumor_Sample_Barcode))
+n_right <- length(unique(right_maf@clinical.data$Tumor_Sample_Barcode))
+
+# Create contingency table
+# Rows: Mutation status (Mutated, Wild-type)
+# Columns: Laterality (Left, Right)
+contingency_table <- matrix(
+  c(
+    length(mut_left),           # Left + Mutated
+    n_left - length(mut_left),  # Left + Wild-type
+    length(mut_right),          # Right + Mutated
+    n_right - length(mut_right) # Right + Wild-type
+  ),
+  nrow = 2,
+  byrow = TRUE,
+  dimnames = list(
+    c("Mutated", "Wild-type"),
+    c("Left", "Right")
+  )
+)
+
+cat("Contingency Table:\n")
+print(contingency_table)
+
+# Fisher's Exact Test
+fisher_result <- fisher.test(contingency_table)
+cat("\nFisher's Exact Test Results:\n")
+print(fisher_result)
+
+cat("\n--- INTERPRETATION ---\n")
+cat(paste0("P-value: ", round(fisher_result$p.value, 4), "\n"))
+cat(paste0("Odds Ratio: ", round(fisher_result$estimate, 3), "\n"))
+
+if (fisher_result$p.value < 0.05) {
+  cat("Result: STATISTICALLY SIGNIFICANT (p < 0.05)\n")
+  cat("There IS a significant association between VHL mutations and tumor laterality.\n")
+} else {
+  cat("Result: NOT statistically significant (p >= 0.05)\n")
+  cat("There is NO significant association between VHL mutations and tumor laterality.\n")
+}
+
+if (fisher_result$estimate > 1) {
+  cat("Odds ratio > 1: VHL mutations are MORE common in Left kidney tumors.\n")
+} else if (fisher_result$estimate < 1) {
+  cat("Odds ratio < 1: VHL mutations are LESS common in Left kidney tumors.\n")
+} else {
+  cat("Odds ratio = 1: VHL mutations are equally common in both groups.\n")
+}
+```
+
+```{r mosaic_vhl, fig.width=8, fig.height=6}
+# Mosaic plot for VHL
+mosaicplot(
+  contingency_table,
+  main = paste(gene, "Mutation vs. Tumor Laterality"),
+  color = c("#E74C3C", "#3498DB"),
+  xlab = "Mutation Status",
+  ylab = "Laterality"
+)
+
+pdf(file.path(output_dir, paste0("mosaic_", gene, "_laterality.pdf")), width = 8, height = 6)
+mosaicplot(
+  contingency_table,
+  main = paste(gene, "Mutation vs. Tumor Laterality"),
+  color = c("#E74C3C", "#3498DB"),
+  xlab = "Mutation Status",
+  ylab = "Laterality"
+)
+dev.off()
+cat(paste0("Saved: mosaic_", gene, "_laterality.pdf\n"))
+```
+
+# ============================================
+# Step 8: Lollipop Plots for Key Driver Genes
+# ============================================
+```{r lollipop_vhl, fig.width=12, fig.height=8}
+# Lollipop plot comparing VHL mutations by laterality
+lollipopPlot2(
+  m1 = left_maf, 
+  m2 = right_maf, 
+  gene = "VHL",
+  m1_name = "Left Kidney",
+  m2_name = "Right Kidney"
+)
+
+pdf(file.path(output_dir, "lollipop_VHL_laterality.pdf"), width = 12, height = 8)
+lollipopPlot2(m1 = left_maf, m2 = right_maf, gene = "VHL",
+              m1_name = "Left Kidney", m2_name = "Right Kidney")
+dev.off()
+cat("Saved: lollipop_VHL_laterality.pdf\n")
+```
+
+```{r lollipop_pbrm1, fig.width=12, fig.height=8}
+# PBRM1 - second most commonly mutated gene in ccRCC
+lollipopPlot2(
+  m1 = left_maf, 
+  m2 = right_maf, 
+  gene = "PBRM1",
+  m1_name = "Left Kidney",
+  m2_name = "Right Kidney"
+)
+
+pdf(file.path(output_dir, "lollipop_PBRM1_laterality.pdf"), width = 12, height = 8)
+lollipopPlot2(m1 = left_maf, m2 = right_maf, gene = "PBRM1",
+              m1_name = "Left Kidney", m2_name = "Right Kidney")
+dev.off()
+cat("Saved: lollipop_PBRM1_laterality.pdf\n")
+```
+
+```{r lollipop_setd2, fig.width=12, fig.height=8}
+# SETD2 - another key ccRCC driver
+tryCatch({
+  lollipopPlot2(
+    m1 = left_maf, 
+    m2 = right_maf, 
+    gene = "SETD2",
+    m1_name = "Left Kidney",
+    m2_name = "Right Kidney"
+  )
+  
+  pdf(file.path(output_dir, "lollipop_SETD2_laterality.pdf"), width = 12, height = 8)
+  lollipopPlot2(m1 = left_maf, m2 = right_maf, gene = "SETD2",
+                m1_name = "Left Kidney", m2_name = "Right Kidney")
+  dev.off()
+  cat("Saved: lollipop_SETD2_laterality.pdf\n")
+}, error = function(e) {
+  cat("Note: SETD2 lollipop plot could not be generated (possibly low mutation count)\n")
+})
+```
+
+# ============================================
+# Step 9: Comprehensive Oncoplot with Clinical Annotations
+# ============================================
+```{r oncoplot_annotated, fig.width=16, fig.height=12}
+# Create oncoplot with laterality, sex, and smoking annotations
+clinical_features <- c("laterality_clean", "gender_clean")
+if ("smoking_status" %in% colnames(maf_object@clinical.data)) {
+  clinical_features <- c(clinical_features, "smoking_status")
+}
+
+oncoplot(
+  maf = maf_object,
+  genes = top_genes,
+  clinicalFeatures = clinical_features,
+  sortByAnnotation = TRUE,
+  annotationFontSize = 0.8,
+  fontSize = 0.6,
+  drawRowBar = TRUE,
+  drawColBar = TRUE
+)
+
+pdf(file.path(output_dir, "oncoplot_with_clinical.pdf"), width = 16, height = 12)
+oncoplot(
+  maf = maf_object,
+  genes = top_genes,
+  clinicalFeatures = clinical_features,
+  sortByAnnotation = TRUE,
+  annotationFontSize = 0.8,
+  fontSize = 0.6,
+  drawRowBar = TRUE,
+  drawColBar = TRUE
+)
+dev.off()
+cat("Saved: oncoplot_with_clinical.pdf\n")
+```
+
+# ============================================
+# Step 10: Additional Fisher's Tests (Sex and Smoking)
+# ============================================
+```{r fisher_sex}
+cat("=== FISHER'S EXACT TEST: VHL vs Sex ===\n\n")
+
+mut_male <- unique(subsetMaf(male_maf, genes = "VHL")@data$Tumor_Sample_Barcode)
+mut_female <- unique(subsetMaf(female_maf, genes = "VHL")@data$Tumor_Sample_Barcode)
+
+n_male <- length(unique(male_maf@clinical.data$Tumor_Sample_Barcode))
+n_female <- length(unique(female_maf@clinical.data$Tumor_Sample_Barcode))
+
+sex_table <- matrix(
+  c(
+    length(mut_male), n_male - length(mut_male),
+    length(mut_female), n_female - length(mut_female)
+  ),
+  nrow = 2, byrow = TRUE,
+  dimnames = list(c("Mutated", "Wild-type"), c("Male", "Female"))
+)
+
+print(sex_table)
+fisher_sex <- fisher.test(sex_table)
+print(fisher_sex)
+
+cat(paste0("\nP-value: ", round(fisher_sex$p.value, 4)))
+cat(paste0("\nOdds Ratio: ", round(fisher_sex$estimate, 3), "\n"))
+```
+
+```{r fisher_smoking}
+if (exists("never_maf") && exists("ever_maf")) {
+  cat("\n=== FISHER'S EXACT TEST: VHL vs Smoking ===\n\n")
+  
+  mut_never <- unique(subsetMaf(never_maf, genes = "VHL")@data$Tumor_Sample_Barcode)
+  mut_ever <- unique(subsetMaf(ever_maf, genes = "VHL")@data$Tumor_Sample_Barcode)
+  
+  n_never <- length(unique(never_maf@clinical.data$Tumor_Sample_Barcode))
+  n_ever <- length(unique(ever_maf@clinical.data$Tumor_Sample_Barcode))
+  
+  smoking_table <- matrix(
+    c(
+      length(mut_never), n_never - length(mut_never),
+      length(mut_ever), n_ever - length(mut_ever)
+    ),
+    nrow = 2, byrow = TRUE,
+    dimnames = list(c("Mutated", "Wild-type"), c("Never", "Ever"))
+  )
+  
+  print(smoking_table)
+  fisher_smoking <- fisher.test(smoking_table)
+  print(fisher_smoking)
+  
+  cat(paste0("\nP-value: ", round(fisher_smoking$p.value, 4)))
+  cat(paste0("\nOdds Ratio: ", round(fisher_smoking$estimate, 3), "\n"))
+}
+```
+
+# ============================================
+# Summary
+# ============================================
+```{r summary}
+cat("\n")
+cat("========================================\n")
+cat("        ANALYSIS COMPLETE              \n")
+cat("========================================\n")
+cat("\nFiles saved to:", output_dir, "\n")
+cat("\nKey outputs generated:\n")
+cat("  - coOncoplot_laterality.pdf\n")
+cat("  - coOncoplot_sex.pdf\n")
+cat("  - coOncoplot_smoking.pdf\n")
+cat("  - forestplot_laterality.pdf\n")
+cat("  - forestplot_sex.pdf\n")
+cat("  - laterality_mutation_comparison.csv\n")
+cat("  - sex_mutation_comparison.csv\n")
+cat("  - smoking_mutation_comparison.csv\n")
+cat("  - mosaic_VHL_laterality.pdf\n")
+cat("  - lollipop_VHL_laterality.pdf\n")
+cat("  - lollipop_PBRM1_laterality.pdf\n")
+cat("  - oncoplot_with_clinical.pdf\n")
+cat("\n")
+cat("========================================\n")
+cat("KEY CHANGES FROM ORIGINAL CODE:\n")
+cat("========================================\n")
+cat("1. Changed variable from 'history_of_malignancy' to LATERALITY\n")
+cat("   (aligned with your hypothesis)\n")
+cat("2. Excluded passenger genes (TTN, MUC16) - they are NOT drivers\n")
+cat("3. Focus on ccRCC drivers: VHL, PBRM1, SETD2, BAP1\n")
+cat("4. Added statistical comparisons with mafCompare()\n")
+cat("5. Added forest plots showing odds ratios\n")
+cat("6. Added stratified analyses (laterality + sex + smoking)\n")
+cat("7. Proper Fisher's test on VHL (not TTN)\n")
+cat("========================================\n")
+```

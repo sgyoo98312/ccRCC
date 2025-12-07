@@ -1,0 +1,228 @@
+---
+title: "RNA_Transcriptomics"
+output: html_document
+---
+
+```{r}
+if (!require("DESeq2", quietly = TRUE))
+  BiocManager::install("DESeq2", ask = FALSE, update = FALSE)
+if (!require("EnhancedVolcano", quietly = TRUE))
+  BiocManager::install("EnhancedVolcano", ask = FALSE, update = FALSE)
+if (!require("ggplot2", quietly = TRUE))
+  install.packages("ggplot2")
+if (!require("dplyr", quietly = TRUE))
+  install.packages("dplyr")
+
+library(DESeq2)
+library(EnhancedVolcano)
+library(ggplot2)
+library(dplyr)
+library(SummarizedExperiment)
+```
+
+```{r}
+# Check the structure of rna_se
+rna_se
+
+# Check dimensions (genes x samples)
+dim(rna_se)
+
+# Look at the column data (sample metadata)
+colnames(colData(rna_se))
+
+# Check if there's a laterality column
+table(rna_se$tissue_or_organ_of_origin, useNA = "ifany")
+```
+
+```{r}
+# First, let's check what patient ID columns are available in rna_se
+head(colData(rna_se)$patient)
+# OR
+head(colData(rna_se)$barcode)
+
+# Check the clinic data for laterality column name
+colnames(clinic)
+
+# Look at laterality values in clinic
+table(clinic$tumor_laterality, useNA = "ifany")
+```
+
+
+```{r}
+# Extract the patient barcode from rna_se (first 12 characters)
+rna_se$patient_barcode <- substr(colData(rna_se)$barcode, 1, 12)
+
+# Check
+head(rna_se$patient_barcode)
+
+# Check clinic barcode format
+head(clinic$Tumor_Sample_Barcode)
+```
+
+```{r}
+colnames(clinic)
+
+# Create a matching dataframe from clinic with laterality
+clinic_lateral <- clinic[, c("Tumor_Sample_Barcode", "laterality")]
+
+# Remove duplicates (keep one entry per patient)
+clinic_lateral <- clinic_lateral[!duplicated(clinic_lateral$Tumor_Sample_Barcode), ]
+
+# Check
+head(clinic_lateral)
+table(clinic_lateral$laterality)
+```
+```{r}
+# Match laterality to rna_se samples
+match_idx <- match(rna_se$patient_barcode, clinic_lateral$Tumor_Sample_Barcode)
+
+# Add laterality to rna_se
+rna_se$laterality <- clinic_lateral$laterality[match_idx]
+
+# Check the result
+table(rna_se$laterality, useNA = "ifany")
+```
+
+```{r}
+# Filter for primary tumors only and valid laterality (Left or Right only)
+rna_se_filtered <- rna_se[, rna_se$definition == "Primary solid Tumor" & 
+                            rna_se$laterality %in% c("Left", "Right")]
+
+# Check dimensions after filtering
+dim(rna_se_filtered)
+
+# Check laterality distribution
+table(rna_se_filtered$laterality)
+```
+
+```{r}
+# Extract count matrix
+count_matrix <- assay(rna_se_filtered, "unstranded")
+
+# Check for NA values and remove genes with too many NAs
+count_matrix <- count_matrix[rowSums(is.na(count_matrix)) == 0, ]
+
+# Remove genes with very low counts (keep genes with at least 10 counts in at least 10 samples)
+keep <- rowSums(count_matrix >= 10) >= 10
+count_matrix <- count_matrix[keep, ]
+
+# Check dimensions
+dim(count_matrix)
+```
+```{r}
+# Create sample metadata dataframe
+sample_info <- data.frame(
+  laterality = factor(rna_se_filtered$laterality),
+  row.names = colnames(count_matrix)
+)
+
+# Check
+head(sample_info)
+table(sample_info$laterality)
+```
+
+```{r}
+# Create DESeq2 dataset
+dds <- DESeqDataSetFromMatrix(
+  countData = count_matrix,
+  colData = sample_info,
+  design = ~ laterality
+)
+
+# Set reference level (compare Right vs Left)
+dds$laterality <- relevel(dds$laterality, ref = "Left")
+
+# Run DESeq2 (this may take a few minutes)
+dds <- DESeq(dds)
+
+# Get results
+results <- results(dds, contrast = c("laterality", "Right", "Left"))
+
+# Summary of results
+summary(results)
+```
+
+```{r}
+# Convert to dataframe and add gene names
+results_df <- as.data.frame(results)
+results_df$gene <- rownames(results_df)
+
+# Remove NA values
+results_df <- results_df[!is.na(results_df$padj), ]
+
+# Check top differentially expressed genes (sorted by adjusted p-value)
+results_df_sorted <- results_df[order(results_df$padj), ]
+head(results_df_sorted, 20)
+```
+
+```{r}
+# Check if you have gene names in rna_se
+head(rowData(rna_se_filtered))
+```
+
+```{r}
+# Get gene names from rowData
+gene_info <- as.data.frame(rowData(rna_se_filtered))
+
+# Check column names to find gene symbol column
+colnames(gene_info)
+```
+
+```{r}
+# Match gene symbols to results (adjust column name if needed)
+# Common column names are: gene_name, external_gene_name, symbol
+results_df$gene_symbol <- gene_info$gene_name[match(results_df$gene, gene_info$gene_id)]
+
+# If gene_symbol is NA, use the ENSEMBL ID
+results_df$gene_symbol <- ifelse(is.na(results_df$gene_symbol), 
+                                  results_df$gene, 
+                                  results_df$gene_symbol)
+
+# Check
+head(results_df[, c("gene", "gene_symbol", "log2FoldChange", "padj")])
+```
+
+```{r}
+# Add significance categories
+results_df$significance <- "Not Significant"
+results_df$significance[results_df$pvalue < 0.05 & results_df$log2FoldChange > 1] <- "Up in Right"
+results_df$significance[results_df$pvalue < 0.05 & results_df$log2FoldChange < -1] <- "Up in Left"
+
+# Check distribution
+table(results_df$significance)
+```
+
+```{r}
+# Create volcano plot
+volcano_plot <- ggplot(results_df, aes(x = log2FoldChange, y = -log10(pvalue), color = significance)) +
+  geom_point(alpha = 0.5, size = 1.5) +
+  scale_color_manual(values = c("Up in Right" = "red", "Up in Left" = "blue", "Not Significant" = "grey")) +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "black") +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "black") +
+  labs(
+    title = "Differential Gene Expression: Right vs Left Kidney Tumors",
+    subtitle = "ccRCC (TCGA-KIRC)",
+    x = "Log2 Fold Change",
+    y = "-Log10(P-value)",
+    color = "Significance"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    legend.position = "right"
+  )
+
+print(volcano_plot)
+```
+
+```{r}
+dir.create("outputs", showWarnings = FALSE)
+```
+
+
+```{r}
+jpeg("outputs/volcano_plot_laterality.jpg", width = 800, height = 600)
+print(volcano_plot)
+dev.off()
+```
